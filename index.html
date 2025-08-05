@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>RTE-700</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding-bottom: 220px;
+        }
+        .terminal {
+            background-color: #fff;
+            color: #333;
+            padding: 15px;
+            font-family: monospace;
+            height: 500px;
+            overflow-y: auto;
+            border-radius: 8px;
+            box-shadow: inset 0 0 6px #ccc;
+            white-space: pre-wrap;
+            font-size: 13px;
+        }
+        .terminal div:hover {
+            background-color: #f0f0f0;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 10px 15px;
+        }
+        .form-control, .form-select {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            height: 32px;
+            border-radius: 8px;
+        }
+        .form-container {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="p-3">
+
+    <h5 class="mb-3">Zentry-RTE</h5>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Entre Locais</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Coleta e entrega</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">293 ADM</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">294 Manutenção</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">Retira</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+                <input type="text" id="filtro1" class="form-control" placeholder="🔍 Buscar por cavalo, motorista ou data..." style="max-width: 300px;">
+                <select id="ordenarPor1" class="form-select" style="width: 200px;">
+                    <option value="data">Ordenar por Data</option>
+                    <option value="cavalo">Ordenar por Cavalo</option>
+                    <option value="motChegada">Ordenar por Mot. Chegada</option>
+                    <option value="motSaida">Ordenar por Mot. Saída</option>
+                </select>
+            </div>
+            <div class="terminal mb-4" id="output1"></div>
+        </div>
+        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+                <input type="text" id="filtro2" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
+                <select id="ordenarPor2" class="form-select" style="width: 200px;">
+                    <option value="data">Ordenar por Data</option>
+                    <option value="motorista">Ordenar por Motorista</option>
+                    <option value="frota">Ordenar por Frota</option>
+                </select>
+            </div>
+            <div class="terminal mb-4" id="output2"></div>
+        </div>
+        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+                <input type="text" id="filtro3" class="form-control" placeholder="🔍 Buscar por motorista ou data..." style="max-width: 300px;">
+                <select id="ordenarPor3" class="form-select" style="width: 200px;">
+                    <option value="data">Ordenar por Data</option>
+                    <option value="motorista">Ordenar por Motorista</option>
+                </select>
+            </div>
+            <div class="terminal mb-4" id="output3"></div>
+        </div>
+        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+                <input type="text" id="filtro4" class="form-control" placeholder="🔍 Buscar por motorista ou data..." style="max-width: 300px;">
+                <select id="ordenarPor4" class="form-select" style="width: 200px;">
+                    <option value="data">Ordenar por Data</option>
+                    <option value="motorista">Ordenar por Motorista</option>
+                </select>
+            </div>
+            <div class="terminal mb-4" id="output4"></div>
+        </div>
+        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
+            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+                <input type="text" id="filtro5" class="form-control" placeholder="🔍 Buscar por nome, placa, setor ou data..." style="max-width: 300px;">
+                <select id="ordenarPor5" class="form-select" style="width: 200px;">
+                    <option value="data">Ordenar por Data</option>
+                    <option value="nome">Ordenar por Nome</option>
+                    <option value="placa">Ordenar por Placa</option>
+                    <option value="setor">Ordenar por Setor</option>
+                </select>
+            </div>
+            <div class="terminal mb-4" id="output5"></div>
+        </div>
+    </div>
+
+    <footer id="form-container-footer">
+        </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const opcoes = ["010", "905", "004", "006", "908", "091", "094", "123", "095", "099", "906", "204", "920", "698", "240", "250", "302", "385", "404", "460", "501", "502", "570", "580", "607", "699", "912"];
+        
+        let editIndex = -1;
+        let activeTab = 1;
+
+        const forms = {
+            1: `
+                <div class="form-container d-flex flex-wrap gap-2 mb-2">
+                    <input type="date" id="data1" class="form-control" style="width: 110px;">
+                    <input type="text" id="cavalo1" class="form-control" placeholder="Cavalo" style="width: 80px;">
+                    <input type="text" id="carreta11" class="form-control" placeholder="Carreta 01" style="width: 90px;">
+                    <input type="text" id="carreta21" class="form-control" placeholder="Carreta 02" style="width: 90px;">
+                    <input type="time" id="hChegada1" class="form-control" style="width: 90px;">
+                    <input type="time" id="hSaida1" class="form-control" style="width: 90px;">
+                    <input type="text" id="motChegada1" class="form-control" placeholder="Mot. Chegada" style="width: 100px;">
+                    <input type="text" id="motSaida1" class="form-control" placeholder="Mot. Saída" style="width: 100px;">
+                    <select id="origem1" class="form-select" style="width: 90px;"><option value="">Origem</option></select>
+                    <select id="destino1" class="form-select" style="width: 90px;"><option value="">Destino</option></select>
+                </div>
+            `,
+            2: `
+                <div class="form-container d-flex flex-wrap gap-2 mb-2">
+                    <input type="date" id="data2" class="form-control" style="width: 110px;">
+                    <input type="text" id="motorista2" class="form-control" placeholder="Motorista" style="width: 120px;">
+                    <input type="text" id="frota2" class="form-control" placeholder="Frota" style="width: 90px;">
+                    <input type="time" id="hSaida2" class="form-control" placeholder="H. saída" style="width: 90px;">
+                    <input type="time" id="hEntrada2" class="form-control" placeholder="H. entrada" style="width: 90px;">
+                    <input type="number" id="kmSaida2" class="form-control" placeholder="Km. saída" style="width: 100px;">
+                    <input type="number" id="kmEntrada2" class="form-control" placeholder="Km. entrada" style="width: 100px;">
+                    <input type="text" id="obs2" class="form-control" placeholder="Obs" style="flex-grow: 1;">
+                </div>
+            `,
+            3: `
+                <div class="form-container d-flex flex-wrap gap-2 mb-2">
+                    <input type="date" id="data3" class="form-control" style="width: 110px;">
+                    <input type="text" id="motorista3" class="form-control" placeholder="Motorista" style="width: 120px;">
+                    <input type="time" id="hSaida3" class="form-control" placeholder="H. saída" style="width: 90px;">
+                    <input type="time" id="hEntrada3" class="form-control" placeholder="H. entrada" style="width: 90px;">
+                    <input type="number" id="kmSaida3" class="form-control" placeholder="Km. saída" style="width: 100px;">
+                    <input type="number" id="kmEntrada3" class="form-control" placeholder="Km. entrada" style="width: 100px;">
+                    <input type="text" id="obs3" class="form-control" placeholder="Obs" style="flex-grow: 1;">
+                </div>
+            `,
+            4: `
+                <div class="form-container d-flex flex-wrap gap-2 mb-2">
+                    <input type="date" id="data4" class="form-control" style="width: 110px;">
+                    <input type="text" id="motorista4" class="form-control" placeholder="Motorista" style="width: 120px;">
+                    <input type="time" id="hSaida4" class="form-control" placeholder="H. saída" style="width: 90px;">
+                    <input type="time" id="hEntrada4" class="form-control" placeholder="H. entrada" style="width: 90px;">
+                    <input type="number" id="kmSaida4" class="form-control" placeholder="Km. saída" style="width: 100px;">
+                    <input type="number" id="kmEntrada4" class="form-control" placeholder="Km. entrada" style="width: 100px;">
+                </div>
+            `,
+            5: `
+                <div class="form-container d-flex flex-wrap gap-2 mb-2">
+                    <input type="date" id="data5" class="form-control" style="width: 110px;">
+                    <input type="text" id="nome5" class="form-control" placeholder="Nome" style="width: 120px;">
+                    <input type="text" id="placa5" class="form-control" placeholder="Placa" style="width: 90px;">
+                    <input type="text" id="modelo5" class="form-control" placeholder="Modelo" style="width: 90px;">
+                    <input type="time" id="horario5" class="form-control" placeholder="Horário" style="width: 90px;">
+                    <input type="text" id="setor5" class="form-control" placeholder="Setor" style="width: 100px;">
+                    <input type="text" id="obs5" class="form-control" placeholder="Obs" style="flex-grow: 1;">
+                </div>
+            `
+        };
+
+        function updateForm() {
+            const footer = document.getElementById('form-container-footer');
+            footer.innerHTML = forms[activeTab] + `
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-success btn-sm" onclick="salvar()">💾 Salvar</button>
+                    <button class="btn btn-secondary btn-sm" onclick="exportTxt()">⬇️ TXT</button>
+                    <button class="btn btn-primary btn-sm" onclick="exportExcel()">⬇️ Excel</button>
+                </div>
+            `;
+            if (activeTab === 1) {
+                const origem = document.getElementById(`origem1`);
+                const destino = document.getElementById(`destino1`);
+                opcoes.forEach(op => {
+                    origem.innerHTML += `<option value="${op}">${op}</option>`;
+                    destino.innerHTML += `<option value="${op}">${op}</option>`;
+                });
+            }
+        }
+        
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', event => {
+                const targetId = event.target.getAttribute('data-bs-target');
+                activeTab = parseInt(targetId.replace('#tab', ''));
+                updateForm();
+                atualizarOutput();
+            });
+        });
+
+        function getLocalStorageKey() {
+            const keys = {
+                1: `registros-aba1`,
+                2: `registros-coleta`,
+                3: `registros-293`,
+                4: `registros-294-manutencao`,
+                5: `registros-retira`
+            };
+            return keys[activeTab];
+        }
+        
+        function getOutputId() {
+            return `output${activeTab}`;
+        }
+        
+        function getFiltroId() {
+            return `filtro${activeTab}`;
+        }
+        
+        function getOrdenarPorId() {
+            return `ordenarPor${activeTab}`;
+        }
+
+        function salvar() {
+            let registro = {};
+            let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+
+            if (activeTab === 1) {
+                registro = {
+                    data: document.getElementById(`data1`).value,
+                    cavalo: document.getElementById(`cavalo1`).value,
+                    carreta1: document.getElementById(`carreta11`).value,
+                    carreta2: document.getElementById(`carreta21`).value,
+                    hChegada: document.getElementById(`hChegada1`).value,
+                    hSaida: document.getElementById(`hSaida1`).value,
+                    motChegada: document.getElementById(`motChegada1`).value,
+                    motSaida: document.getElementById(`motSaida1`).value,
+                    origem: document.getElementById(`origem1`).value,
+                    destino: document.getElementById(`destino1`).value
+                };
+            } else if (activeTab === 2) {
+                registro = {
+                    data: document.getElementById(`data2`).value,
+                    motorista: document.getElementById(`motorista2`).value,
+                    frota: document.getElementById(`frota2`).value,
+                    hSaida: document.getElementById(`hSaida2`).value,
+                    hEntrada: document.getElementById(`hEntrada2`).value,
+                    kmSaida: document.getElementById(`kmSaida2`).value,
+                    kmEntrada: document.getElementById(`kmEntrada2`).value,
+                    obs: document.getElementById(`obs2`).value,
+                };
+            } else if (activeTab === 3) {
+                 registro = {
+                    data: document.getElementById(`data3`).value,
+                    motorista: document.getElementById(`motorista3`).value,
+                    hSaida: document.getElementById(`hSaida3`).value,
+                    hEntrada: document.getElementById(`hEntrada3`).value,
+                    kmSaida: document.getElementById(`kmSaida3`).value,
+                    kmEntrada: document.getElementById(`kmEntrada3`).value,
+                    obs: document.getElementById(`obs3`).value,
+                };
+            } else if (activeTab === 4) {
+                 registro = {
+                    data: document.getElementById(`data4`).value,
+                    motorista: document.getElementById(`motorista4`).value,
+                    hSaida: document.getElementById(`hSaida4`).value,
+                    hEntrada: document.getElementById(`hEntrada4`).value,
+                    kmSaida: document.getElementById(`kmSaida4`).value,
+                    kmEntrada: document.getElementById(`kmEntrada4`).value,
+                };
+            } else if (activeTab === 5) {
+                 registro = {
+                    data: document.getElementById(`data5`).value,
+                    nome: document.getElementById(`nome5`).value,
+                    placa: document.getElementById(`placa5`).value,
+                    modelo: document.getElementById(`modelo5`).value,
+                    horario: document.getElementById(`horario5`).value,
+                    setor: document.getElementById(`setor5`).value,
+                    obs: document.getElementById(`obs5`).value,
+                };
+            }
+
+            if (editIndex >= 0) {
+                registros[editIndex] = registro;
+                editIndex = -1;
+            } else {
+                registros.push(registro);
+            }
+
+            localStorage.setItem(getLocalStorageKey(), JSON.stringify(registros));
+            limparCampos();
+            atualizarOutput();
+        }
+
+        function limparCampos() {
+            const formInputs = document.querySelectorAll(`#form-container-footer input, #form-container-footer select`);
+            formInputs.forEach(el => el.value = "");
+        }
+
+        function atualizarOutput() {
+            const output = document.getElementById(getOutputId());
+            output.innerHTML = "";
+
+            let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+
+            const filtroInput = document.getElementById(getFiltroId());
+            const filtro = filtroInput ? filtroInput.value.toLowerCase() : "";
+            const ordenar = document.getElementById(getOrdenarPorId()).value;
+            
+            registros = registros.filter(r => {
+                if (activeTab === 1) {
+                    return r.cavalo?.toLowerCase().includes(filtro) || r.motChegada?.toLowerCase().includes(filtro) || r.motSaida?.toLowerCase().includes(filtro) || r.data?.includes(filtro);
+                } else if (activeTab === 2 || activeTab === 3 || activeTab === 4) {
+                    return r.motorista?.toLowerCase().includes(filtro) || r.frota?.toLowerCase().includes(filtro) || r.data?.includes(filtro);
+                } else if (activeTab === 5) {
+                    return r.nome?.toLowerCase().includes(filtro) || r.placa?.toLowerCase().includes(filtro) || r.setor?.toLowerCase().includes(filtro) || r.data?.includes(filtro);
+                }
+                return false;
+            });
+
+            registros.sort((a, b) => {
+                if (ordenar === 'data') {
+                    return (a.data + (a.horario || a.hSaida || a.hChegada || '')).localeCompare(b.data + (b.horario || b.hSaida || b.hChegada || ''));
+                }
+                return (a[ordenar] || "").localeCompare(b[ordenar] || "");
+            });
+
+            registros.forEach((r, i) => {
+                const linha = document.createElement("div");
+                if (activeTab === 1) {
+                    linha.textContent =
+                        `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} ` +
+                        `H. Chegada: ${r.hChegada} H. Saída: ${r.hSaida} Mot. Chegada: ${r.motChegada} Mot. Saída: ${r.motSaida} ` +
+                        `Origem: ${r.origem} Destino: ${r.destino}`;
+                } else if (activeTab === 2) {
+                    linha.textContent =
+                        `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} ` +
+                        `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                        `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
+                } else if (activeTab === 3) {
+                     linha.textContent =
+                        `Data: ${r.data} Motorista: ${r.motorista} ` +
+                        `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                        `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
+                } else if (activeTab === 4) {
+                    linha.textContent =
+                        `Data: ${r.data} Motorista: ${r.motorista} ` +
+                        `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                        `Km. entrada: ${r.kmEntrada}`;
+                } else if (activeTab === 5) {
+                    linha.textContent =
+                        `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} ` +
+                        `Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`;
+                }
+
+                linha.style.cursor = "pointer";
+                linha.ondblclick = () => editar(i);
+                linha.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    if (confirm("Excluir este registro?")) {
+                        deletar(i);
+                    }
+                };
+                output.appendChild(linha);
+            });
+        }
+
+        function editar(i) {
+            const r = JSON.parse(localStorage.getItem(getLocalStorageKey()))[i];
+            
+            if (activeTab === 1) {
+                document.getElementById(`data1`).value = r.data;
+                document.getElementById(`cavalo1`).value = r.cavalo;
+                document.getElementById(`carreta11`).value = r.carreta1;
+                document.getElementById(`carreta21`).value = r.carreta2;
+                document.getElementById(`hChegada1`).value = r.hChegada;
+                document.getElementById(`hSaida1`).value = r.hSaida;
+                document.getElementById(`motChegada1`).value = r.motChegada;
+                document.getElementById(`motSaida1`).value = r.motSaida;
+                document.getElementById(`origem1`).value = r.origem;
+                document.getElementById(`destino1`).value = r.destino;
+            } else if (activeTab === 2) {
+                document.getElementById(`data2`).value = r.data;
+                document.getElementById(`motorista2`).value = r.motorista;
+                document.getElementById(`frota2`).value = r.frota;
+                document.getElementById(`hSaida2`).value = r.hSaida;
+                document.getElementById(`hEntrada2`).value = r.hEntrada;
+                document.getElementById(`kmSaida2`).value = r.kmSaida;
+                document.getElementById(`kmEntrada2`).value = r.kmEntrada;
+                document.getElementById(`obs2`).value = r.obs;
+            } else if (activeTab === 3) {
+                 document.getElementById(`data3`).value = r.data;
+                 document.getElementById(`motorista3`).value = r.motorista;
+                 document.getElementById(`hSaida3`).value = r.hSaida;
+                 document.getElementById(`hEntrada3`).value = r.hEntrada;
+                 document.getElementById(`kmSaida3`).value = r.kmSaida;
+                 document.getElementById(`kmEntrada3`).value = r.kmEntrada;
+                 document.getElementById(`obs3`).value = r.obs;
+            } else if (activeTab === 4) {
+                 document.getElementById(`data4`).value = r.data;
+                 document.getElementById(`motorista4`).value = r.motorista;
+                 document.getElementById(`hSaida4`).value = r.hSaida;
+                 document.getElementById(`hEntrada4`).value = r.hEntrada;
+                 document.getElementById(`kmSaida4`).value = r.kmSaida;
+                 document.getElementById(`kmEntrada4`).value = r.kmEntrada;
+            } else if (activeTab === 5) {
+                 document.getElementById(`data5`).value = r.data;
+                 document.getElementById(`nome5`).value = r.nome;
+                 document.getElementById(`placa5`).value = r.placa;
+                 document.getElementById(`modelo5`).value = r.modelo;
+                 document.getElementById(`horario5`).value = r.horario;
+                 document.getElementById(`setor5`).value = r.setor;
+                 document.getElementById(`obs5`).value = r.obs;
+            }
+            editIndex = i;
+        }
+
+        function deletar(i) {
+            let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()));
+            registros.splice(i, 1);
+            localStorage.setItem(getLocalStorageKey(), JSON.stringify(registros));
+            atualizarOutput();
+        }
+
+        function exportTxt() {
+            const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+            const linhas = registros.map(r => {
+                if (activeTab === 1) {
+                    return `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} ` +
+                           `H.Chegada: ${r.hChegada} H.Saída: ${r.hSaida} Mot.Chegada: ${r.motChegada} Mot.Saída: ${r.motSaida} ` +
+                           `Origem: ${r.origem} Destino: ${r.destino}`;
+                } else if (activeTab === 2) {
+                    return `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} ` +
+                           `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                           `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
+                } else if (activeTab === 3) {
+                     return `Data: ${r.data} Motorista: ${r.motorista} ` +
+                           `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                           `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
+                } else if (activeTab === 4) {
+                     return `Data: ${r.data} Motorista: ${r.motorista} ` +
+                           `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
+                           `Km. entrada: ${r.kmEntrada}`;
+                } else if (activeTab === 5) {
+                    return `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} ` +
+                           `Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`;
+                }
+                return "";
+            });
+            const blob = new Blob([linhas.join("\n")], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `${getLocalStorageKey()}.txt`;
+            a.click();
+        }
+
+        function exportExcel() {
+            const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+            const ws = XLSX.utils.json_to_sheet(registros);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Registros");
+            XLSX.writeFile(wb, `${getLocalStorageKey()}.xlsx`);
+        }
+        
+        document.getElementById("filtro1").addEventListener("input", atualizarOutput);
+        document.getElementById("filtro2").addEventListener("input", atualizarOutput);
+        document.getElementById("filtro3").addEventListener("input", atualizarOutput);
+        document.getElementById("filtro4").addEventListener("input", atualizarOutput);
+        document.getElementById("filtro5").addEventListener("input", atualizarOutput);
+        document.getElementById("ordenarPor1").addEventListener("change", atualizarOutput);
+        document.getElementById("ordenarPor2").addEventListener("change", atualizarOutput);
+        document.getElementById("ordenarPor3").addEventListener("change", atualizarOutput);
+        document.getElementById("ordenarPor4").addEventListener("change", atualizarOutput);
+        document.getElementById("ordenarPor5").addEventListener("change", atualizarOutput);
+
+        window.onload = () => {
+            updateForm();
+            atualizarOutput();
+
+            document.addEventListener("keydown", e => {
+                if (e.ctrlKey && e.key === "s") {
+                    e.preventDefault();
+                    salvar();
+                } else if (e.ctrlKey && e.key === "f") {
+                    e.preventDefault();
+                    document.getElementById(getFiltroId()).focus();
+                } else if (e.key === "Escape") {
+                    limparCampos();
+                    editIndex = -1;
+                }
+            });
+        };
+    </script>
+</body>
+</html>
