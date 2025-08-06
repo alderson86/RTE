@@ -2,14 +2,17 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Zentry-RTE</title>
+    <title>Zentry-RTE V2.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f4f4;
-            font-family: "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            font-family: "Roboto", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             padding-bottom: 220px;
         }
         .terminal {
@@ -20,7 +23,7 @@
             height: 500px;
             overflow-y: auto;
             border-radius: 8px;
-            box-shadow: inset 0 0 6px #ccc;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
             white-space: pre-wrap;
             font-size: 13px;
         }
@@ -44,12 +47,14 @@
             background-color: #fff;
             border-top: 1px solid #ddd;
             padding: 10px 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        .form-control, .form-select, .btn {
+            font-size: 0.85rem;
+            border-radius: 8px;
         }
         .form-control, .form-select {
-            font-size: 0.85rem;
-            padding: 4px 8px;
-            height: 32px;
-            border-radius: 8px;
+            height: 34px;
         }
         .form-container {
             overflow-x: auto;
@@ -57,12 +62,112 @@
         #placa5 {
             text-transform: uppercase;
         }
+        .nav-tabs .nav-link {
+            color: #495057;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        /* --- Estilos da Aba Agenda --- */
+        .agenda-container {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            height: 520px;
+        }
+        .calendar-section, .clock-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow-y: auto;
+        }
+        #calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        #calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+        .calendar-day-name {
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .calendar-day {
+            padding: 8px 4px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        .calendar-day:hover {
+            background-color: #e9ecef;
+        }
+        .calendar-day.today {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+        }
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background-color: #dc3545;
+            border-radius: 50%;
+        }
+        #live-clock {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        #appointments-list h5 {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .appointment-item {
+            font-size: 0.9rem; padding: 5px;
+        }
+        /* --- Alerta Customizado --- */
+        #custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            z-index: 2000;
+            padding: 25px;
+            text-align: center;
+        }
+        #custom-alert-message {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body class="p-3">
 
-    <h5 class="mb-3">Zentry-RTE</h5>
-
+    <h3 class="mb-3">Zentry-RTE V2.0</h3>
+    <h10 class="mb-3">V2.0 / AllSec TI </h10>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Entre Locais</button>
@@ -71,18 +176,25 @@
             <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Coleta e entrega</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">293 ADM 
-                <li class="nav-item" role="presentation"> A
+            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">293 ADM</button>  
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">294 Manutenção</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">Retira</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">Registro de Ocorrência</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab7-tab" data-bs-toggle="tab" data-bs-target="#tab7" type="button" role="tab" aria-controls="tab7" aria-selected="false">🗓️ Agenda</button>
+        </li>
     </ul>
 
-    <div class="tab-content" id="myTabContent">
+    <div class="tab-content pt-3" id="myTabContent">
         <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+            <div class="mb-2 d-flex gap-2 flex-wrap">
                 <input type="text" id="filtro1" class="form-control" placeholder="🔍 Buscar por cavalo, motorista ou data..." style="max-width: 300px;">
                 <select id="ordenarPor1" class="form-select" style="width: 200px;">
                     <option value="data">Ordenar por Data</option>
@@ -94,7 +206,7 @@
             <div class="terminal mb-4" id="output1"></div>
         </div>
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+            <div class="mb-2 d-flex gap-2 flex-wrap">
                 <input type="text" id="filtro2" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
                 <select id="ordenarPor2" class="form-select" style="width: 200px;">
                     <option value="data">Ordenar por Data</option>
@@ -105,7 +217,7 @@
             <div class="terminal mb-4" id="output2"></div>
         </div>
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+            <div class="mb-2 d-flex gap-2 flex-wrap">
                 <input type="text" id="filtro3" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
                 <select id="ordenarPor3" class="form-select" style="width: 200px;">
                     <option value="data">Ordenar por Data</option>
@@ -116,7 +228,7 @@
             <div class="terminal mb-4" id="output3"></div>
         </div>
         <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+            <div class="mb-2 d-flex gap-2 flex-wrap">
                 <input type="text" id="filtro4" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
                 <select id="ordenarPor4" class="form-select" style="width: 200px;">
                     <option value="data">Ordenar por Data</option>
@@ -127,7 +239,7 @@
             <div class="terminal mb-4" id="output4"></div>
         </div>
         <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap mt-3">
+            <div class="mb-2 d-flex gap-2 flex-wrap">
                 <input type="text" id="filtro5" class="form-control" placeholder="🔍 Buscar por nome, placa ou data..." style="max-width: 300px;">
                 <select id="ordenarPor5" class="form-select" style="width: 200px;">
                     <option value="data">Ordenar por Data</option>
@@ -137,102 +249,135 @@
             </div>
             <div class="terminal mb-4" id="output5"></div>
         </div>
+        <div class="tab-pane fade" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
+             <div class="terminal mb-4" id="output6"></div>
+        </div>
+        <div class="tab-pane fade" id="tab7" role="tabpanel" aria-labelledby="tab7-tab">
+            <div class="agenda-container">
+                <div class="calendar-section">
+                    <div id="calendar-header">
+                        <button class="btn btn-outline-primary btn-sm" id="prev-month">◄</button>
+                        <h4 id="month-year"></h4>
+                        <button class="btn btn-outline-primary btn-sm" id="next-month">►</button>
+                    </div>
+                    <div id="calendar-grid"></div>
+                </div>
+                <div class="clock-section">
+                    <div id="live-clock"></div>
+                    <div id="appointments-list">
+                        <h5>Compromissos e Alertas</h5>
+                        <div id="appointments-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <footer id="form-container-footer">
-    </footer>
+        </footer>
+
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="eventModalLabel">Agendar Compromisso/Alerta</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="eventDate">
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="eventDescription" placeholder="Ex: Reunião de equipe">
+            </div>
+            <div class="mb-3">
+              <label for="eventTime" class="form-label">Horário do Alerta</label>
+              <input type="time" class="form-control" id="eventTime">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="saveEvent">Salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="custom-alert">
+        <h4 id="custom-alert-title">⏰ Alerta de Compromisso!</h4>
+        <p id="custom-alert-message">Mensagem do alerta aqui.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <button class="btn btn-warning" id="snooze-alert">Adiar (5 min)</button>
+            <button class="btn btn-danger" id="close-alert">Fechar</button>
+        </div>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // --- CONFIGURAÇÃO INICIAL ---
         const opcoes = ["010", "905", "004", "006", "908", "091", "094", "123", "095", "099", "906", "204", "920", "698", "240", "250", "302", "385", "404", "460", "501", "502", "570", "580", "607", "699", "912"];
         
         let editIndex = -1;
         let activeTab = 1;
         let selectedIndices = [];
-
+        let eventModal; // Variável para a instância do modal do Bootstrap
+        let currentAlert = null; // Guarda o alerta ativo
+        
+        // --- Formulários para cada aba ---
         const forms = {
-            1: `
-                <div class="form-container d-flex flex-wrap gap-2 mb-2">
-                    <input type="date" id="data1" class="form-control" style="width: 110px;">
-                    <input type="text" id="cavalo1" class="form-control" placeholder="Cavalo" style="width: 80px;">
-                    <input type="text" id="carreta11" class="form-control" placeholder="Carreta 01" style="width: 90px;">
-                    <input type="text" id="carreta21" class="form-control" placeholder="Carreta 02" style="width: 90px;">
-                    <input type="time" id="hChegada1" class="form-control" style="width: 90px;">
-                    <input type="time" id="hSaida1" class="form-control" style="width: 90px;">
-                    <input type="text" id="motChegada1" class="form-control" placeholder="Mot. Chegada" style="width: 100px;">
-                    <input type="text" id="motSaida1" class="form-control" placeholder="Mot. Saída" style="width: 100px;">
-                    <select id="origem1" class="form-select" style="width: 90px;"><option value="">Origem</option></select>
-                    <select id="destino1" class="form-select" style="width: 90px;"><option value="">Destino</option></select>
-                </div>
+            1: `...`, // Seu form 1 original
+            2: `...`, // Seu form 2 original
+            3: `...`, // Seu form 3 original
+            4: `...`, // Seu form 4 original
+            5: `...`, // Seu form 5 original
+            6: `
+                <form id="form6" action="https://formspree.io/f/YOUR_EMAIL_CODE_HERE" method="POST" class="d-flex flex-column gap-2">
+                     <textarea id="ocorrencia6" name="ocorrencia" class="form-control" rows="4" placeholder="Digite a ocorrência..."></textarea>
+                     <div class="d-flex justify-content-end gap-2">
+                         <button type="button" class="btn btn-success btn-sm" onclick="salvar()">💾 Salvar Localmente</button>
+                         <button type="submit" class="btn btn-info btn-sm">📧 Enviar por E-mail</button>
+                     </div>
+                </form>
             `,
-            2: `
-                <div class="form-container d-flex flex-wrap gap-2 mb-2">
-                    <input type="date" id="data2" class="form-control" style="width: 110px;">
-                    <input type="text" id="motorista2" class="form-control" placeholder="Motorista" style="width: 120px;">
-                    <input type="text" id="frota2" class="form-control" placeholder="Frota" style="width: 90px;">
-                    <input type="time" id="hSaida2" class="form-control" placeholder="H. saída" style="width: 90px;">
-                    <input type="time" id="hEntrada2" class="form-control" placeholder="H. entrada" style="width: 90px;">
-                    <input type="number" id="kmSaida2" class="form-control" placeholder="Km. saída" style="width: 100px;">
-                    <input type="number" id="kmEntrada2" class="form-control" placeholder="Km. entrada" style="width: 100px;">
-                    <input type="text" id="obs2" class="form-control" placeholder="Obs" style="flex-grow: 1;">
-                </div>
-            `,
-            3: `
-                <div class="form-container d-flex flex-wrap gap-2 mb-2">
-                    <input type="date" id="data3" class="form-control" style="width: 110px;">
-                    <input type="text" id="motorista3" class="form-control" placeholder="Motorista" style="width: 120px;">
-                    <input type="text" id="frota3" class="form-control" placeholder="Frota" style="width: 90px;">
-                    <input type="time" id="hSaida3" class="form-control" placeholder="H. saída" style="width: 90px;">
-                    <input type="time" id="hEntrada3" class="form-control" placeholder="H. entrada" style="width: 90px;">
-                    <input type="number" id="kmSaida3" class="form-control" placeholder="Km. saída" style="width: 100px;">
-                    <input type="number" id="kmEntrada3" class="form-control" placeholder="Km. entrada" style="width: 100px;">
-                    <input type="text" id="obs3" class="form-control" placeholder="Obs" style="flex-grow: 1;">
-                </div>
-            `,
-            4: `
-                <div class="form-container d-flex flex-wrap gap-2 mb-2">
-                    <input type="date" id="data4" class="form-control" style="width: 110px;">
-                    <input type="text" id="motorista4" class="form-control" placeholder="Motorista" style="width: 120px;">
-                    <input type="text" id="frota4" class="form-control" placeholder="Frota" style="width: 90px;">
-                    <input type="time" id="hSaida4" class="form-control" placeholder="H. saída" style="width: 90px;">
-                    <input type="time" id="hEntrada4" class="form-control" placeholder="H. entrada" style="width: 90px;">
-                    <input type="number" id="kmSaida4" class="form-control" placeholder="Km. saída" style="width: 100px;">
-                    <input type="number" id="kmEntrada4" class="form-control" placeholder="Km. entrada" style="width: 100px;">
-                    <input type="text" id="obs4" class="form-control" placeholder="Obs" style="flex-grow: 1;">
-                </div>
-            `,
-            5: `
-                <div class="form-container d-flex flex-wrap gap-2 mb-2">
-                    <input type="date" id="data5" class="form-control" style="width: 110px;">
-                    <input type="text" id="nome5" class="form-control" placeholder="Nome" style="width: 150px;">
-                    <input type="text" id="placa5" class="form-control" placeholder="Placa" style="width: 100px;">
-                    <input type="text" id="modelo5" class="form-control" placeholder="Modelo" style="width: 120px;">
-                    <input type="time" id="horario5" class="form-control" placeholder="Horário" style="width: 90px;">
-                    <input type="text" id="setor5" class="form-control" placeholder="Setor" style="width: 100px;">
-                    <input type="text" id="obs5" class="form-control" placeholder="Obs" style="flex-grow: 1;">
-                </div>
-            `
+            7: `<div class="text-center p-3">Selecione um dia no calendário para adicionar um compromisso.</div>`
         };
+
+        // Preenchendo os formulários originais para manter o código limpo
+        forms[1] = `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data1" class="form-control" style="width: 110px;"><input type="text" id="cavalo1" class="form-control" placeholder="Cavalo" style="width: 80px;"><input type="text" id="carreta11" class="form-control" placeholder="Carreta 01" style="width: 90px;"><input type="text" id="carreta21" class="form-control" placeholder="Carreta 02" style="width: 90px;"><input type="time" id="hChegada1" class="form-control" style="width: 90px;"><input type="time" id="hSaida1" class="form-control" style="width: 90px;"><input type="text" id="motChegada1" class="form-control" placeholder="Mot. Chegada" style="width: 100px;"><input type="text" id="motSaida1" class="form-control" placeholder="Mot. Saída" style="width: 100px;"><select id="origem1" class="form-select" style="width: 90px;"><option value="">Origem</option></select><select id="destino1" class="form-select" style="width: 90px;"><option value="">Destino</option></select></div>`;
+        const commonFormPart = (n) => `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data${n}" class="form-control" style="width: 110px;"><input type="text" id="motorista${n}" class="form-control" placeholder="Motorista" style="width: 120px;"><input type="text" id="frota${n}" class="form-control" placeholder="Frota" style="width: 90px;"><input type="time" id="hSaida${n}" class="form-control" placeholder="H. saída" style="width: 90px;"><input type="time" id="hEntrada${n}" class="form-control" placeholder="H. entrada" style="width: 90px;"><input type="number" id="kmSaida${n}" class="form-control" placeholder="Km. saída" style="width: 100px;"><input type="number" id="kmEntrada${n}" class="form-control" placeholder="Km. entrada" style="width: 100px;"><input type="text" id="obs${n}" class="form-control" placeholder="Obs" style="flex-grow: 1;"></div>`;
+        forms[2] = commonFormPart(2);
+        forms[3] = commonFormPart(3);
+        forms[4] = commonFormPart(4);
+        forms[5] = `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data5" class="form-control" style="width: 110px;"><input type="text" id="nome5" class="form-control" placeholder="Nome" style="width: 150px;"><input type="text" id="placa5" class="form-control" placeholder="Placa" style="width: 100px;"><input type="text" id="modelo5" class="form-control" placeholder="Modelo" style="width: 120px;"><input type="time" id="horario5" class="form-control" placeholder="Horário" style="width: 90px;"><input type="text" id="setor5" class="form-control" placeholder="Setor" style="width: 100px;"><input type="text" id="obs5" class="form-control" placeholder="Obs" style="flex-grow: 1;"></div>`;
+        
+        // --- FUNÇÕES PRINCIPAIS ---
 
         function updateForm() {
             const footer = document.getElementById('form-container-footer');
-            footer.innerHTML = forms[activeTab] + `
-                <div class="d-flex justify-content-end gap-2">
-                    <button class="btn btn-danger btn-sm" onclick="deletarSelecionados()">🗑️ Deletar Selecionados</button>
-                    <button class="btn btn-success btn-sm" onclick="salvar()">💾 Salvar</button>
-                    <button class="btn btn-secondary btn-sm" onclick="exportTxt()">⬇️ TXT</button>
-                    <button class="btn btn-primary btn-sm" onclick="exportExcel()">⬇️ Excel</button>
-                </div>
-            `;
+            let formHtml = forms[activeTab] || '';
+            
+            // Adiciona botões comuns para as abas 1-5
+            if (activeTab >= 1 && activeTab <= 5) {
+                 formHtml += `
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-danger btn-sm" onclick="deletarSelecionados()">🗑️Del</button>
+                        <button class="btn btn-success btn-sm" onclick="salvar()">💾Salve</button>
+                        <button class="btn btn-secondary btn-sm" onclick="exportTxt()">⬇️ TXT</button>
+                        <button class="btn btn-primary btn-sm" onclick="exportExcel()">⬇️ Exc</button>
+                    </div>`;
+            }
+            
+            footer.innerHTML = formHtml;
+
+            // Lógica específica pós-renderização do formulário
             if (activeTab === 1) {
-                const origem = document.getElementById(`origem${activeTab}`);
-                const destino = document.getElementById(`destino${activeTab}`);
+                const origem = document.getElementById('origem1');
+                const destino = document.getElementById('destino1');
                 opcoes.forEach(op => {
                     origem.innerHTML += `<option value="${op}">${op}</option>`;
                     destino.innerHTML += `<option value="${op}">${op}</option>`;
                 });
-            }
-            if (activeTab === 5) {
+            } else if (activeTab === 5) {
                 document.getElementById('placa5').addEventListener('input', autocompletarPlaca);
             }
         }
@@ -253,6 +398,8 @@
                 case 3: return `registros-293`;
                 case 4: return `registros-294`;
                 case 5: return `registros-retira`;
+                case 6: return `registros-ocorrencia`;
+                case 7: return `registros-agenda`; // Chave para a agenda
                 default: return `registros-aba${activeTab}`;
             }
         }
@@ -274,39 +421,25 @@
             let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
             const tabNumber = activeTab;
 
-            if (tabNumber === 1) {
+            if (tabNumber >= 1 && tabNumber <= 5) {
+                // Lógica de salvar original para as abas 1 a 5
+                // (O código original foi omitido para brevidade, mas deve ser mantido aqui)
+                 if (tabNumber === 1) {
+                    registro = { data: document.getElementById(`data1`).value, cavalo: document.getElementById(`cavalo1`).value, carreta1: document.getElementById(`carreta11`).value, carreta2: document.getElementById(`carreta21`).value, hChegada: document.getElementById(`hChegada1`).value, hSaida: document.getElementById(`hSaida1`).value, motChegada: document.getElementById(`motChegada1`).value, motSaida: document.getElementById(`motSaida1`).value, origem: document.getElementById(`origem1`).value, destino: document.getElementById(`destino1`).value };
+                } else if (tabNumber >= 2 && tabNumber <= 4) {
+                    registro = { data: document.getElementById(`data${tabNumber}`).value, motorista: document.getElementById(`motorista${tabNumber}`).value, frota: document.getElementById(`frota${tabNumber}`).value, hSaida: document.getElementById(`hSaida${tabNumber}`).value, hEntrada: document.getElementById(`hEntrada${tabNumber}`).value, kmSaida: document.getElementById(`kmSaida${tabNumber}`).value, kmEntrada: document.getElementById(`kmEntrada${tabNumber}`).value, obs: document.getElementById(`obs${tabNumber}`).value };
+                } else if (tabNumber === 5) {
+                    registro = { data: document.getElementById(`data5`).value, nome: document.getElementById(`nome5`).value, placa: document.getElementById(`placa5`).value.toUpperCase(), modelo: document.getElementById(`modelo5`).value, horario: document.getElementById(`horario5`).value, setor: document.getElementById(`setor5`).value, obs: document.getElementById(`obs5`).value };
+                }
+            } else if (tabNumber === 6) {
+                const ocorrencia = document.getElementById('ocorrencia6').value;
+                if (!ocorrencia) {
+                    alert("Por favor, digite uma ocorrência.");
+                    return;
+                }
                 registro = {
-                    data: document.getElementById(`data${tabNumber}`).value,
-                    cavalo: document.getElementById(`cavalo${tabNumber}`).value,
-                    carreta1: document.getElementById(`carreta1${tabNumber}`).value,
-                    carreta2: document.getElementById(`carreta2${tabNumber}`).value,
-                    hChegada: document.getElementById(`hChegada${tabNumber}`).value,
-                    hSaida: document.getElementById(`hSaida${tabNumber}`).value,
-                    motChegada: document.getElementById(`motChegada${tabNumber}`).value,
-                    motSaida: document.getElementById(`motSaida${tabNumber}`).value,
-                    origem: document.getElementById(`origem${tabNumber}`).value,
-                    destino: document.getElementById(`destino${tabNumber}`).value
-                };
-            } else if (tabNumber === 2 || tabNumber === 3 || tabNumber === 4) {
-                registro = {
-                    data: document.getElementById(`data${tabNumber}`).value,
-                    motorista: document.getElementById(`motorista${tabNumber}`).value,
-                    frota: document.getElementById(`frota${tabNumber}`).value,
-                    hSaida: document.getElementById(`hSaida${tabNumber}`).value,
-                    hEntrada: document.getElementById(`hEntrada${tabNumber}`).value,
-                    kmSaida: document.getElementById(`kmSaida${tabNumber}`).value,
-                    kmEntrada: document.getElementById(`kmEntrada${tabNumber}`).value,
-                    obs: document.getElementById(`obs${tabNumber}`).value,
-                };
-            } else if (tabNumber === 5) {
-                registro = {
-                    data: document.getElementById(`data${tabNumber}`).value,
-                    nome: document.getElementById(`nome${tabNumber}`).value,
-                    placa: document.getElementById(`placa${tabNumber}`).value.toUpperCase(),
-                    modelo: document.getElementById(`modelo${tabNumber}`).value,
-                    horario: document.getElementById(`horario${tabNumber}`).value,
-                    setor: document.getElementById(`setor${tabNumber}`).value,
-                    obs: document.getElementById(`obs${tabNumber}`).value,
+                    texto: ocorrencia,
+                    data: new Date().toISOString()
                 };
             }
 
@@ -323,46 +456,22 @@
         }
 
         function limparCampos() {
+            // Código original de limpar campos para abas 1-5 omitido para brevidade
             const tabNumber = activeTab;
-            if (tabNumber === 1) {
-                document.getElementById('data1').value = "";
-                document.getElementById('cavalo1').value = "";
-                document.getElementById('carreta11').value = "";
-                document.getElementById('carreta21').value = "";
-                document.getElementById('hChegada1').value = "";
-                document.getElementById('hSaida1').value = "";
-                document.getElementById('motChegada1').value = "";
-                document.getElementById('motSaida1').value = "";
-                document.getElementById('origem1').value = "";
-                document.getElementById('destino1').value = "";
-            } else if (tabNumber === 2 || tabNumber === 3 || tabNumber === 4) {
-                document.getElementById(`data${tabNumber}`).value = "";
-                document.getElementById(`motorista${tabNumber}`).value = "";
-                document.getElementById(`frota${tabNumber}`).value = "";
-                document.getElementById(`hSaida${tabNumber}`).value = "";
-                document.getElementById(`hEntrada${tabNumber}`).value = "";
-                document.getElementById(`kmSaida${tabNumber}`).value = "";
-                document.getElementById(`kmEntrada${tabNumber}`).value = "";
-                document.getElementById(`obs${tabNumber}`).value = "";
-            } else if (tabNumber === 5) {
-                document.getElementById('data5').value = "";
-                document.getElementById('nome5').value = "";
-                document.getElementById('placa5').value = "";
-                document.getElementById('modelo5').value = "";
-                document.getElementById('horario5').value = "";
-                document.getElementById('setor5').value = "";
-                document.getElementById('obs5').value = "";
+            if (tabNumber === 1) { document.getElementById('data1').value = ""; document.getElementById('cavalo1').value = ""; document.getElementById('carreta11').value = ""; document.getElementById('carreta21').value = ""; document.getElementById('hChegada1').value = ""; document.getElementById('hSaida1').value = ""; document.getElementById('motChegada1').value = ""; document.getElementById('motSaida1').value = ""; document.getElementById('origem1').value = ""; document.getElementById('destino1').value = ""; }
+            else if (tabNumber >= 2 && tabNumber <= 4) { document.getElementById(`data${tabNumber}`).value = ""; document.getElementById(`motorista${tabNumber}`).value = ""; document.getElementById(`frota${tabNumber}`).value = ""; document.getElementById(`hSaida${tabNumber}`).value = ""; document.getElementById(`hEntrada${tabNumber}`).value = ""; document.getElementById(`kmSaida${tabNumber}`).value = ""; document.getElementById(`kmEntrada${tabNumber}`).value = ""; document.getElementById(`obs${tabNumber}`).value = ""; }
+            else if (tabNumber === 5) { document.getElementById('data5').value = ""; document.getElementById('nome5').value = ""; document.getElementById('placa5').value = ""; document.getElementById('modelo5').value = ""; document.getElementById('horario5').value = ""; document.getElementById('setor5').value = ""; document.getElementById('obs5').value = ""; }
+            else if (tabNumber === 6) {
+                document.getElementById('ocorrencia6').value = "";
             }
         }
-
-        function autocompletarPlaca() {
-            if (activeTab !== 5) return;
+        
+        function autocompletarPlaca() { /* Código original inalterado */
+             if (activeTab !== 5) return;
             const placaInput = document.getElementById('placa5');
             const placa = placaInput.value.toUpperCase().trim();
             const registros = JSON.parse(localStorage.getItem('registros-retira') || "[]");
-
             const registroEncontrado = registros.find(r => r.placa === placa);
-
             if (registroEncontrado) {
                 document.getElementById('nome5').value = registroEncontrado.nome;
                 document.getElementById('modelo5').value = registroEncontrado.modelo;
@@ -377,146 +486,95 @@
         }
 
         function atualizarOutput() {
+            if (activeTab === 7) { // Se for a aba da Agenda, usa a função específica
+                displayCalendar();
+                displayAppointments();
+                return;
+            }
+
             const output = document.getElementById(getOutputId());
+            if (!output) return;
             output.innerHTML = "";
             selectedIndices = [];
-
             let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 
-            const filtroInput = document.getElementById(getFiltroId());
-            const filtro = filtroInput ? filtroInput.value.toLowerCase() : "";
-            const ordenar = document.getElementById(getOrdenarPorId()).value;
-            const tabNumber = activeTab;
-            
-            registros = registros.filter(r => {
-                if (tabNumber === 1) {
-                    return r.cavalo?.toLowerCase().includes(filtro) ||
-                           r.motChegada?.toLowerCase().includes(filtro) ||
-                           r.motSaida?.toLowerCase().includes(filtro) ||
-                           r.data?.includes(filtro);
-                } else if (tabNumber === 2 || tabNumber === 3 || tabNumber === 4) {
-                    return r.motorista?.toLowerCase().includes(filtro) ||
-                           r.frota?.toLowerCase().includes(filtro) ||
-                           r.data?.includes(filtro);
-                } else if (tabNumber === 5) {
-                    return r.nome?.toLowerCase().includes(filtro) ||
-                           r.placa?.toLowerCase().includes(filtro) ||
-                           r.data?.includes(filtro);
-                }
-                return true;
-            });
+            // Filtragem e Ordenação para abas 1-5 (código original)
+            if (activeTab >= 1 && activeTab <= 5) {
+                const filtroInput = document.getElementById(getFiltroId());
+                const filtro = filtroInput ? filtroInput.value.toLowerCase() : "";
+                const ordenar = document.getElementById(getOrdenarPorId()).value;
 
-            registros.sort((a, b) => {
-                if (ordenar === 'data') {
-                    return (a.data + (a.horario || a.hChegada || '') + (a.hSaida || '')).localeCompare(b.data + (b.horario || b.hChegada || '') + (b.hSaida || ''));
-                }
-                return (a[ordenar] || "").localeCompare(b[ordenar] || "");
-            });
+                registros = registros.filter(r => {
+                     if (activeTab === 1) { return r.cavalo?.toLowerCase().includes(filtro) || r.motChegada?.toLowerCase().includes(filtro) || r.motSaida?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
+                     else if (activeTab >= 2 && activeTab <= 4) { return r.motorista?.toLowerCase().includes(filtro) || r.frota?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
+                     else if (activeTab === 5) { return r.nome?.toLowerCase().includes(filtro) || r.placa?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
+                     return true;
+                });
+                registros.sort((a, b) => {
+                    if (ordenar === 'data') { return (a.data + (a.horario || a.hChegada || '') + (a.hSaida || '')).localeCompare(b.data + (b.horario || b.hChegada || '') + (b.hSaida || '')); }
+                    return (a[ordenar] || "").localeCompare(b[ordenar] || "");
+                });
+            }
 
             registros.forEach((r, i) => {
                 const linha = document.createElement("div");
                 let textContent = "";
-                if (tabNumber === 1) {
-                    textContent = `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} ` +
-                                  `H. Chegada: ${r.hChegada} H. Saída: ${r.hSaida} Mot. Chegada: ${r.motChegada} Mot. Saída: ${r.motSaida} ` +
-                                  `Origem: ${r.origem} Destino: ${r.destino}`;
-                } else if (tabNumber === 2 || tabNumber === 3 || tabNumber === 4) {
-                    textContent = `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} ` +
-                                  `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
-                                  `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
-                } else if (tabNumber === 5) {
-                    textContent = `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} ` +
-                                  `Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`;
+                if (activeTab === 6) { // Output para a aba de ocorrências
+                    textContent = `[${new Date(r.data).toLocaleString('pt-BR')}] - ${r.texto}`;
+                } else {
+                     // Código original de exibição para abas 1-5
+                    if (activeTab === 1) { textContent = `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} H. Chegada: ${r.hChegada} H. Saída: ${r.hSaida} Mot. Chegada: ${r.motChegada} Mot. Saída: ${r.motSaida} Origem: ${r.origem} Destino: ${r.destino}`; }
+                    else if (activeTab >= 2 && activeTab <= 4) { textContent = `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`; }
+                    else if (activeTab === 5) { textContent = `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`; }
+                }
+
+                if (activeTab >= 1 && activeTab <= 5) {
+                    linha.innerHTML = `<input type="checkbox" data-index="${i}"> ${textContent}`;
+                    linha.querySelector('input').addEventListener('change', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        if (e.target.checked) selectedIndices.push(index);
+                        else selectedIndices = selectedIndices.filter(item => item !== index);
+                    });
+                } else {
+                    linha.textContent = textContent;
                 }
                 
-                linha.innerHTML = `<input type="checkbox" data-index="${i}"> ${textContent}`;
-                linha.querySelector('input').addEventListener('change', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    if (e.target.checked) {
-                        selectedIndices.push(index);
-                    } else {
-                        selectedIndices = selectedIndices.filter(item => item !== index);
-                    }
-                });
                 linha.ondblclick = () => editar(i);
                 output.appendChild(linha);
             });
         }
         
-        function deletarSelecionados() {
-            if (selectedIndices.length === 0) {
-                alert("Nenhum item selecionado para deletar.");
-                return;
-            }
+        function deletarSelecionados() { /* Código original inalterado */
+            if (selectedIndices.length === 0) { alert("Nenhum item selecionado para deletar."); return; }
             if (confirm(`Tem certeza que deseja deletar os ${selectedIndices.length} registro(s) selecionado(s)?`)) {
                 let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-                
-                // Ordena os índices em ordem decrescente para evitar problemas ao deletar
                 selectedIndices.sort((a, b) => b - a);
-                
-                selectedIndices.forEach(index => {
-                    if (registros[index]) {
-                        registros.splice(index, 1);
-                    }
-                });
-                
+                selectedIndices.forEach(index => { if (registros[index]) registros.splice(index, 1); });
                 localStorage.setItem(getLocalStorageKey(), JSON.stringify(registros));
                 atualizarOutput();
             }
         }
 
-        function editar(i) {
+        function editar(i) { /* Código original modificado para incluir aba 6 */
             const r = JSON.parse(localStorage.getItem(getLocalStorageKey()))[i];
             const tabNumber = activeTab;
-
-            if (tabNumber === 1) {
-                document.getElementById(`data${tabNumber}`).value = r.data;
-                document.getElementById(`cavalo${tabNumber}`).value = r.cavalo;
-                document.getElementById(`carreta1${tabNumber}`).value = r.carreta1;
-                document.getElementById(`carreta2${tabNumber}`).value = r.carreta2;
-                document.getElementById(`hChegada${tabNumber}`).value = r.hChegada;
-                document.getElementById(`hSaida${tabNumber}`).value = r.hSaida;
-                document.getElementById(`motChegada${tabNumber}`).value = r.motChegada;
-                document.getElementById(`motSaida${tabNumber}`).value = r.motSaida;
-                document.getElementById(`origem${tabNumber}`).value = r.origem;
-                document.getElementById(`destino${tabNumber}`).value = r.destino;
-            } else if (tabNumber === 2 || tabNumber === 3 || tabNumber === 4) {
-                document.getElementById(`data${tabNumber}`).value = r.data;
-                document.getElementById(`motorista${tabNumber}`).value = r.motorista;
-                document.getElementById(`frota${tabNumber}`).value = r.frota;
-                document.getElementById(`hSaida${tabNumber}`).value = r.hSaida;
-                document.getElementById(`hEntrada${tabNumber}`).value = r.hEntrada;
-                document.getElementById(`kmSaida${tabNumber}`).value = r.kmSaida;
-                document.getElementById(`kmEntrada${tabNumber}`).value = r.kmEntrada;
-                document.getElementById(`obs${tabNumber}`).value = r.obs;
-            } else if (tabNumber === 5) {
-                document.getElementById(`data${tabNumber}`).value = r.data;
-                document.getElementById(`nome${tabNumber}`).value = r.nome;
-                document.getElementById(`placa${tabNumber}`).value = r.placa;
-                document.getElementById(`modelo${tabNumber}`).value = r.modelo;
-                document.getElementById(`horario${tabNumber}`).value = r.horario;
-                document.getElementById(`setor${tabNumber}`).value = r.setor;
-                document.getElementById(`obs${tabNumber}`).value = r.obs;
+            if (tabNumber >=1 && tabNumber <= 5) {
+                 if (tabNumber === 1) { document.getElementById(`data1`).value = r.data; document.getElementById(`cavalo1`).value = r.cavalo; document.getElementById(`carreta11`).value = r.carreta1; document.getElementById(`carreta21`).value = r.carreta2; document.getElementById(`hChegada1`).value = r.hChegada; document.getElementById(`hSaida1`).value = r.hSaida; document.getElementById(`motChegada1`).value = r.motChegada; document.getElementById(`motSaida1`).value = r.motSaida; document.getElementById(`origem1`).value = r.origem; document.getElementById(`destino1`).value = r.destino; }
+                 else if (tabNumber >= 2 && tabNumber <= 4) { document.getElementById(`data${tabNumber}`).value = r.data; document.getElementById(`motorista${tabNumber}`).value = r.motorista; document.getElementById(`frota${tabNumber}`).value = r.frota; document.getElementById(`hSaida${tabNumber}`).value = r.hSaida; document.getElementById(`hEntrada${tabNumber}`).value = r.hEntrada; document.getElementById(`kmSaida${tabNumber}`).value = r.kmSaida; document.getElementById(`kmEntrada${tabNumber}`).value = r.kmEntrada; document.getElementById(`obs${tabNumber}`).value = r.obs; }
+                 else if (tabNumber === 5) { document.getElementById(`data5`).value = r.data; document.getElementById(`nome5`).value = r.nome; document.getElementById(`placa5`).value = r.placa; document.getElementById(`modelo5`).value = r.modelo; document.getElementById(`horario5`).value = r.horario; document.getElementById(`setor5`).value = r.setor; document.getElementById(`obs5`).value = r.obs; }
+            } else if (tabNumber === 6) {
+                document.getElementById('ocorrencia6').value = r.texto;
             }
             editIndex = i;
         }
 
-        function exportTxt() {
+        function exportTxt() { /* Código original inalterado */
             const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
             const linhas = registros.map(r => {
-                if (activeTab === 1) {
-                    return `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} ` +
-                           `H.Chegada: ${r.hChegada} H.Saída: ${r.hSaida} Mot.Chegada: ${r.motChegada} Mot.Saída: ${r.motSaida} ` +
-                           `Origem: ${r.origem} Destino: ${r.destino}`;
-                } else if (activeTab === 2 || activeTab === 3 || activeTab === 4) {
-                    return `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} ` +
-                           `H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} ` +
-                           `Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`;
-                } else if (activeTab === 5) {
-                    return `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} ` +
-                           `Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`;
-                }
-                return "";
+                 if (activeTab === 1) { return `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} H.Chegada: ${r.hChegada} H.Saída: ${r.hSaida} Mot.Chegada: ${r.motChegada} Mot.Saída: ${r.motSaida} Origem: ${r.origem} Destino: ${r.destino}`; }
+                 else if (activeTab >= 2 && activeTab <= 4) { return `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`; }
+                 else if (activeTab === 5) { return `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`; }
+                 return "";
             });
             const blob = new Blob([linhas.join("\n")], { type: "text/plain" });
             const a = document.createElement("a");
@@ -525,7 +583,7 @@
             a.click();
         }
 
-        function exportExcel() {
+        function exportExcel() { /* Código original inalterado */
             const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
             const ws = XLSX.utils.json_to_sheet(registros);
             const wb = XLSX.utils.book_new();
@@ -536,20 +594,208 @@
         document.querySelectorAll("[id^=filtro]").forEach(el => el.addEventListener("input", atualizarOutput));
         document.querySelectorAll("[id^=ordenarPor]").forEach(el => el.addEventListener("change", atualizarOutput));
 
+        // --- LÓGICA DA ABA AGENDA (NOVO) ---
+        
+        let currentDisplayDate = new Date();
+
+        function displayCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const monthYearEl = document.getElementById('month-year');
+            calendarGrid.innerHTML = '';
+            
+            const year = currentDisplayDate.getFullYear();
+            const month = currentDisplayDate.getMonth();
+            
+            monthYearEl.textContent = `${currentDisplayDate.toLocaleString('pt-BR', { month: 'long' })} ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
+
+            // Nomes dos dias da semana
+            ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(dayName => {
+                calendarGrid.innerHTML += `<div class="calendar-day-name">${dayName}</div>`;
+            });
+            
+            // Espaços em branco para o início do mês
+            for (let i = 0; i < firstDay; i++) {
+                calendarGrid.innerHTML += `<div></div>`;
+            }
+
+            // Dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.textContent = day;
+                dayEl.classList.add('calendar-day');
+                
+                const today = new Date();
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayEl.classList.add('today');
+                }
+
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (appointments.some(app => app.date === dateStr)) {
+                    dayEl.classList.add('has-event');
+                }
+
+                dayEl.addEventListener('click', () => {
+                    document.getElementById('eventDate').value = dateStr;
+                    document.getElementById('eventDescription').value = '';
+                    document.getElementById('eventTime').value = '';
+                    eventModal.show();
+                });
+                calendarGrid.appendChild(dayEl);
+            }
+        }
+
+        function displayAppointments() {
+            const contentEl = document.getElementById('appointments-content');
+            contentEl.innerHTML = '';
+            const appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]').sort((a,b) => a.datetime.localeCompare(b.datetime));
+            
+            if (appointments.length === 0) {
+                contentEl.innerHTML = '<p class="text-muted">Nenhum compromisso agendado.</p>';
+                return;
+            }
+
+            appointments.forEach((app, index) => {
+                const appDate = new Date(app.datetime);
+                const item = document.createElement('div');
+                item.className = 'd-flex justify-content-between align-items-center appointment-item';
+                item.innerHTML = `
+                    <span>
+                        <strong>${appDate.toLocaleDateString('pt-BR')}, ${appDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</strong>: 
+                        ${app.description}
+                    </span>
+                    <button class="btn btn-outline-danger btn-sm py-0 px-1" onclick="deleteAppointment(${index})">X</button>
+                `;
+                contentEl.appendChild(item);
+            });
+        }
+        
+        function deleteAppointment(index) {
+            if (!confirm("Tem certeza que deseja apagar este compromisso?")) return;
+            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
+            appointments.splice(index, 1);
+            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
+            atualizarOutput();
+        }
+
+        function saveAppointment() {
+            const date = document.getElementById('eventDate').value;
+            const time = document.getElementById('eventTime').value;
+            const description = document.getElementById('eventDescription').value;
+
+            if (!time || !description) {
+                alert("Por favor, preencha a descrição e o horário.");
+                return;
+            }
+
+            const appointment = {
+                id: Date.now(), // ID único para o alerta
+                date: date,
+                time: time,
+                datetime: `${date}T${time}`,
+                description: description,
+                triggered: false
+            };
+
+            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
+            appointments.push(appointment);
+            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
+            
+            eventModal.hide();
+            atualizarOutput();
+        }
+
+        // --- LÓGICA DO RELÓGIO E ALARMES (NOVO) ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toLocaleTimeString('pt-BR');
+        }
+
+        function checkAlarms() {
+            const now = new Date();
+            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
+            
+            appointments.forEach(app => {
+                const appTime = new Date(app.datetime);
+                if (!app.triggered && now >= appTime) {
+                    showAlert(app);
+                    app.triggered = true;
+                }
+            });
+            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
+        }
+
+        function showAlert(appointment) {
+            currentAlert = appointment;
+            document.getElementById('custom-alert-message').textContent = appointment.description;
+            document.getElementById('custom-alert').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').style.display = 'none';
+            currentAlert = null;
+        }
+
+        function snoozeAlert() {
+            if (!currentAlert) return;
+            
+            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
+            const alertIndex = appointments.findIndex(a => a.id === currentAlert.id);
+
+            if (alertIndex > -1) {
+                const newTime = new Date(new Date(appointments[alertIndex].datetime).getTime() + 5 * 60000); // Adia 5 minutos
+                appointments[alertIndex].datetime = newTime.toISOString().slice(0, 16);
+                appointments[alertIndex].triggered = false; // Permite que o alarme toque de novo
+                localStorage.setItem('registros-agenda', JSON.stringify(appointments));
+            }
+            closeAlert();
+            displayAppointments();
+        }
+
+
+        // --- INICIALIZAÇÃO ---
         window.onload = () => {
             updateForm();
             atualizarOutput();
+            
+            eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+            document.getElementById('saveEvent').addEventListener('click', saveAppointment);
 
+            // Controles do calendário
+            document.getElementById('prev-month').addEventListener('click', () => {
+                currentDisplayDate.setMonth(currentDisplayDate.getMonth() - 1);
+                displayCalendar();
+            });
+            document.getElementById('next-month').addEventListener('click', () => {
+                currentDisplayDate.setMonth(currentDisplayDate.getMonth() + 1);
+                displayCalendar();
+            });
+
+            // Controles do alerta
+            document.getElementById('close-alert').addEventListener('click', closeAlert);
+            document.getElementById('snooze-alert').addEventListener('click', snoozeAlert);
+
+            // Loops
+            setInterval(updateClock, 1000); // Atualiza o relógio a cada segundo
+            setInterval(checkAlarms, 15000); // Verifica os alarmes a cada 15 segundos
+
+            // Atalhos de teclado
             document.addEventListener("keydown", e => {
                 if (e.ctrlKey && e.key === "s") {
                     e.preventDefault();
-                    salvar();
+                    if (activeTab <= 6) salvar();
                 } else if (e.ctrlKey && e.key === "f") {
                     e.preventDefault();
-                    document.getElementById(getFiltroId()).focus();
+                    const filtroId = getFiltroId();
+                    if(document.getElementById(filtroId)) document.getElementById(filtroId).focus();
                 } else if (e.key === "Escape") {
                     limparCampos();
                     editIndex = -1;
+                    eventModal.hide();
+                    closeAlert();
                 }
             });
         };
