@@ -10,7 +10,1575 @@
         :root {
             --bg-color: #f2f2f7;
             --text-color: #000;
+            --navbar-bg: rgba(255, 255, 255, 0.75);<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentry RTE-700</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f2f2f7;
+            --text-color: #000;
             --navbar-bg: rgba(255, 255, 255, 0.75);
+            --navbar-border: #d1d1d6;
+            --container-bg: rgba(255, 255, 255, 0.75);
+            --container-border: #d1d1d6;
+            --header-bg: rgba(233, 233, 239, 0.75);
+            --header-border: #c8c2cc;
+            --table-hover: #f7f7f7;
+            --table-selected: #e6f0ff;
+            --input-bg: #fff;
+            --input-border: #c6c6c8;
+            --input-placeholder: #8e8e93;
+            --button-bg: #007aff;
+            --button-hover: #0a84ff;
+            --button-disabled: #c6c6c8;
+            --modal-bg: #fff;
+            --modal-border: #d1d1d6;
+            --modal-btn-secondary-bg: #e6e6eb;
+            --modal-btn-secondary-hover: #d1d1d6;
+            --modal-btn-danger-bg: #ff3d3d;
+            --modal-btn-danger-hover: #e03838;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --toast-bg: rgba(0, 0, 0, 0.85);
+            --toast-color: #fff;
+            --terminal-bg: #e6e6eb;
+            --terminal-text: #2c2c2e;
+        }
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --navbar-bg: rgba(30, 30, 30, 0.75);
+            --navbar-border: #333;
+            --container-bg: rgba(30, 30, 30, 0.75);
+            --container-border: #333;
+            --header-bg: rgba(43, 43, 43, 0.75);
+            --header-border: #444;
+            --table-hover: #2b2b2b;
+            --table-selected: #3a3a3a;
+            --input-bg: #2b2b2b;
+            --input-border: #444;
+            --input-placeholder: #a0a0a0;
+            --button-bg: #005fcc;
+            --button-hover: #004599;
+            --button-disabled: #444;
+            --modal-bg: #1e1e1e;
+            --modal-border: #333;
+            --modal-btn-secondary-bg: #2b2b2b;
+            --modal-btn-secondary-hover: #444;
+            --modal-btn-danger-bg: #cc3333;
+            --modal-btn-danger-hover: #a02a2a;
+            --card-bg: #1e1e1e;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --toast-bg: rgba(255, 255, 255, 0.85);
+            --toast-color: #000;
+            --terminal-bg: #2c2c2e;
+            --terminal-text: #00ff7f;
+            color: var(--text-color) !important;
+        }
+        body { padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; transition: background-color 0.3s ease; }
+        .glassmorphism {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: var(--container-bg);
+            border: 1px solid var(--container-border);
+        }
+        .navbar { background-color: var(--navbar-bg) !important; border-bottom: 1px solid var(--navbar-border); position: fixed; top: 0; left: 0; right: 0; z-index: 1040; transition: background-color 0.3s ease; }
+        .navbar-brand { color: var(--text-color) !important; }
+        .nav-tabs .nav-link { color: var(--text-color); border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: border-bottom-color 0.3s ease, color 0.3s ease; }
+        .nav-tabs .nav-link.active { color: var(--button-bg); border-bottom-color: var(--button-bg); }
+        .fixed-bottom-form { 
+            padding: 15px;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 1030; border-radius: 8px 8px 0 0; 
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); 
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+        .table-container { 
+            max-height: 60vh; overflow-y: auto; border-radius: 8px; 
+            margin: 10px;
+        }
+        .list-table { width: 100%; border-collapse: collapse; }
+        .list-table th, .list-table td { padding: 4px 15px; white-space: nowrap; border: none; text-align: left; }
+        .list-table tr { cursor: pointer; background-color: transparent; transition: background-color 0.2s ease; }
+        .list-table tr:hover { background-color: var(--table-hover); }
+        .list-table tr.selected { background-color: var(--table-selected); }
+        .form-control, .form-select { 
+            border-radius: 5px; background-color: var(--input-bg); color: var(--text-color); 
+            border: 1px solid var(--input-border); padding: 8px 12px; font-size: 1rem; 
+            transition: background-color 0.3s ease, border-color 0.3s ease; 
+        }
+        .form-control::placeholder { color: var(--input-placeholder); }
+        .fixed-bottom-form .form-control, .fixed-bottom-form .form-select {
+            width: 100%; height: auto; padding: 10px 15px; font-size: 1rem;
+            color: var(--text-color); background-color: var(--input-bg); background-image: none;
+            border: 1px solid var(--input-border); box-shadow: none;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+        .fixed-bottom-form .row > div { padding-right: 5px; padding-left: 5px; }
+        .btn-icon { 
+            width: 40px; height: 40px; border-radius: 8px; background-color: transparent; border: none; color: var(--button-bg); 
+            display: flex; justify-content: center; align-items: center; font-size: 1.2rem;
+            transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+        }
+        .btn-icon:hover { background-color: rgba(0, 122, 255, 0.1); transform: scale(1.05); cursor: pointer; }
+        .btn-icon:disabled { color: var(--button-disabled); cursor: not-allowed; background-color: transparent; }
+        .modal-content { border-radius: 10px; border: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); background-color: var(--modal-bg); color: var(--text-color); }
+        .modal-header { border-bottom: 1px solid var(--modal-border); padding: 15px; }
+        .modal-title { font-size: 1.3rem; font-weight: 500; }
+        .modal-body { padding: 15px; }
+        .modal-footer { border-top: 1px solid var(--modal-border); padding: 15px; display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-footer button { border-radius: 8px; padding: 10px 15px; font-size: 1rem; }
+        .modal-footer .btn-secondary { background-color: var(--modal-btn-secondary-bg); color: var(--text-color); border: 1px solid var(--input-border); transition: background-color 0.2s ease; }
+        .modal-footer .btn-secondary:hover { background-color: var(--modal-btn-secondary-hover); }
+        .modal-footer .btn-danger { background-color: var(--modal-btn-danger-bg); color: #fff; border: none; transition: background-color 0.2s ease; }
+        .modal-footer .btn-danger:hover { background-color: var(--modal-btn-danger-hover); }
+        .nav-tabs { border-bottom: 1px solid var(--navbar-border); }
+        .table-header-sticky { 
+            position: sticky; top: 0; background: var(--header-bg); border-radius: 8px 8px 0 0; z-index: 1020; 
+            transition: background-color 0.3s ease;
+        }
+        .table-header-sticky .search-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid var(--header-border);
+        }
+        .info-container { display: flex; gap: 10px; font-size: 0.9rem; flex-wrap: wrap; }
+        .info-container span { background: var(--input-border); padding: 5px 8px; border-radius: 5px; color: var(--text-color); }
+        .search-container { flex-grow: 1; padding-right: 15px; }
+        .search-input { width: 100%; padding: 8px 12px; border-radius: 5px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--text-color); }
+        .list-table thead th {
+            position: sticky; top: 50px; background: var(--header-bg); border-bottom: 1-px solid var(--header-border); z-index: 1010;
+        }
+        .tab-pane.fade {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+        }
+        .tab-pane.fade.show {
+            opacity: 1;
+        }
+        .tab-pane .list-table tbody tr {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .frota-status-green { color: green; font-weight: bold; }
+        .frota-status-red { color: red; font-weight: bold; }
+        .frota-status-warning { color: orange; font-weight: bold; }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .dashboard-card .icon {
+            font-size: 2.5rem;
+            color: var(--button-bg);
+            margin-bottom: 10px;
+        }
+        .dashboard-card .title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+        .dashboard-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .dashboard-card .value.warning {
+            color: orange;
+        }
+        .dashboard-card .sub-values {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .dashboard-card .sub-value {
+            font-size: 1rem;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dashboard-card .sub-value .label {
+            font-size: 0.8rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .dashboard-chart-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+        #hidden-pdf-container {
+            position: absolute;
+            left: -9999px;
+            width: 800px;
+            height: auto;
+            background: #fff;
+            color: #000;
+        }
+        .dashboard-terminal-card {
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .dashboard-terminal-card .title {
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .terminal-log-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: var(--terminal-text);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .terminal-log-list li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 2px 0;
+        }
+        /* Estilos da aba Sistema */
+        .sistema-container .btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+        }
+        .user-list-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .btn-desabilitado {
+            cursor: not-allowed;
+            opacity: 0.65;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .highlight-post{ color: #007aff; }
+        .highlight-retira{ color: #dc3545; }
+        .highlight-rh{ color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="modal fade" id="masterPasswordModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Acesso Restrito</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Por favor, insira a senha mestra para exportar os logs.</p>
+                    <input type="password" class="form-control" id="masterPasswordInput" placeholder="Senha Mestra">
+                    <div id="masterPasswordFeedback" class="mt-2 text-danger"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmExportLogs()">Exportar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="systemContent">
+        <nav class="navbar navbar-expand-lg navbar-light glassmorphism">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="https://zentry.kr/assets/common/zentry-logo.png" style="width: 80px; height: 40px; margin-right: 10px;">
+                    RTE - 700
+                </a>
+                <ul class="nav nav-tabs mx-auto" id="myTab" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#coleta-e-entrega">Coleta e entrega</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#entre-locais">Entre locais</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#adm-293">293 ADM</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#manutencao-294">294 Manutenção</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#clientes-visitantes">Clientes / Visitantes</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sistema">Sistema</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sobre">Sobre</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="me-2 text-truncate" style="max-width: 120px;">user_test</span>
+                    <button class="btn btn-icon" id="darkModeToggle"><i class="fa-solid fa-moon"></i></button>
+                    <button class="btn btn-icon" onclick="showToast('O botão de logout foi desativado nesta versão do código.')"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="tab-content container mt-3 mb-5">
+            <div class="tab-pane fade show active" id="dashboard">
+                <div class="container p-3 mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">Painel de Monitoramento</h3>
+                        <button class="btn btn-primary" onclick="exportarDashboardPDF()"><i class="fa-solid fa-file-pdf me-2"></i>Exportar PDF</button>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-truck-ramp-box icon"></i>
+                            <div class="title">Coleta e Entrega</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-ce-saidas">0</span>
+                                    <span class="label">Saídas</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-ce-retornar">0</span>
+                                    <span class="label">Falta Retornar</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-truck-moving icon"></i>
+                            <div class="title">Entre Locais</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-el-chegadas">0</span>
+                                    <span class="label">Chegadas</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-el-saidas">0</span>
+                                    <span class="label">Saídas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-building-user icon"></i>
+                            <div class="title">293 ADM</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-293adm-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-293adm-km-mensal">0km</span>
+                                    <span class="label">Média KM Mês</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-tools icon"></i>
+                            <div class="title">294 Manutenção</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-294manutencao-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-294manutencao-km-mensal">0km</span>
+                                    <span class="label">Média KM Mês</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-user-group icon"></i>
+                            <div class="title">Clientes / Visitantes</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-cv-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-cv-mensal">0</span>
+                                    <span class="label">Média Mês</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2 w-100">
+                                <span class="badge rounded-pill bg-primary mx-1" id="badge-posto">Posto: 0</span>
+                                <span class="badge rounded-pill bg-danger mx-1" id="badge-retira">Retira: 0</span>
+                                <span class="badge rounded-pill bg-success mx-1" id="badge-rh">RH: 0</span>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-user-gear icon"></i>
+                            <div class="title">Motoristas em Saída</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-gilberto">0</span>
+                                    <span class="label">Gilberto</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-wender">0</span>
+                                    <span class="label">Wender</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-moises">0</span>
+                                    <span class="label">Moisés</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-terminal-card">
+                            <div class="title"><i class="fa-solid fa-terminal me-2"></i>Logs do Sistema</div>
+                            <ul id="recent-logs-list" class="terminal-log-list"></ul>
+                            <div class="d-flex justify-content-end mt-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="exportarLogs()">Exportar Logs</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-chart-container mt-4">
+                        <h5 class="text-center mb-3">Movimentação Diária (Hoje)</h5>
+                        <div class="chart-container"><canvas id="dailyMovementChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="coleta-e-entrega">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="coleta-e-entrega-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-coleta-e-entrega">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Frota</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-coleta-e-entrega">
+                        <div class="col-md-auto">
+                            <select id="coleta-e-entrega-motorista" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <select id="coleta-e-entrega-frota" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="coleta-e-entrega-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="coleta-e-entrega-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="coleta-e-entrega-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="coleta-e-entrega-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('coleta-e-entrega')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-coleta-e-entrega" disabled onclick="confirmarEdicao('coleta-e-entrega')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-coleta-e-entrega" disabled onclick="confirmarExclusao('coleta-e-entrega')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="entre-locais">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="entre-locais-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div class="info-container">
+                                <span id="entre-locais-patio">No Pátio: 0</span>
+                                <span id="entre-locais-total">Total de Hoje: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-entre-locais">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cavalo</th>
+                                <th>Carreta 1</th>
+                                <th>Carreta 2</th>
+                                <th>Hora Chegada</th>
+                                <th>Hora Saída</th>
+                                <th>Mot. Chegada</th>
+                                <th>Mot. Saída</th>
+                                <th>Origem</th>
+                                <th>Destino</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-entre-locais">
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-cavalo" class="form-control" placeholder="Cavalo">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-carreta1" class="form-control" placeholder="Carreta 1">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-carreta2" class="form-control" placeholder="Carreta 2">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="entre-locais-horachegada" class="form-control" placeholder="Hora Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="entre-locais-horasaida" class="form-control" placeholder="Hora Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-motchegada" class="form-control" placeholder="Mot. Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-motsaida" class="form-control" placeholder="Mot. Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-origem" class="form-control" placeholder="Origem">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-destino" class="form-control" placeholder="Destino">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('entre-locais')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-entre-locais" disabled onclick="confirmarEdicao('entre-locais')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-entre-locais" disabled onclick="confirmarExclusao('entre-locais')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="adm-293">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="adm-293-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-adm-293">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-adm-293">
+                        <div class="col-md-auto">
+                            <input type="text" id="adm-293-motorista" class="form-control" placeholder="Motorista">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="adm-293-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="adm-293-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="adm-293-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="adm-293-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('adm-293')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-adm-293" disabled onclick="confirmarEdicao('adm-293')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-adm-293" disabled onclick="confirmarExclusao('adm-293')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="manutencao-294">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="manutencao-294-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-manutencao-294">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-manutencao-294">
+                        <div class="col-md-auto">
+                            <input type="text" id="manutencao-294-motorista" class="form-control" placeholder="Motorista">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="manutencao-294-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="manutencao-294-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="manutencao-294-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="manutencao-294-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('manutencao-294')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-manutencao-294" disabled onclick="confirmarEdicao('manutencao-294')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-manutencao-294" disabled onclick="confirmarExclusao('manutencao-294')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="clientes-visitantes">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="clientes-visitantes-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-clientes-visitantes">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Nome</th>
+                                <th>Empresa</th>
+                                <th>Placa / CPF</th>
+                                <th>Marca / Modelo</th>
+                                <th>Hora</th>
+                                <th>Setor</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-clientes-visitantes">
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-nome" class="form-control" placeholder="Nome">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-empresa" class="form-control" placeholder="Empresa">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-placacpf" class="form-control" placeholder="Placa / CPF">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-marcamodelo" class="form-control" placeholder="Marca / Modelo">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="clientes-visitantes-hora" class="form-control" placeholder="Hora">
+                        </div>
+                        <div class="col-md-auto">
+                            <select id="clientes-visitantes-setor" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('clientes-visitantes')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-clientes-visitantes" disabled onclick="confirmarEdicao('clientes-visitantes')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-clientes-visitantes" disabled onclick="confirmarExclusao('clientes-visitantes')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="sistema">
+                <div class="container glassmorphism p-4 mt-3 sistema-container">
+                    <h3 class="mb-4 text-center">Gerenciamento de Usuários</h3>
+                    <p class="text-center text-muted mb-4">Esta seção está desativada no front-end e serve como base para uma futura implementação com um back-end.</p>
+                    <div class="d-grid gap-2 col-6 mx-auto mb-4">
+                        <button class="btn btn-primary" onclick="showToast('Esta funcionalidade requer um back-end.')"><i class="fa-solid fa-user-plus me-2"></i> Novo Usuário</button>
+                    </div>
+                    
+                    <div class="user-list-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Usuário</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="sobre">
+                <div class="container glassmorphism p-4 mt-3">
+                    <h3 class="text-center mb-4">Sobre o Sistema</h3>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-circle-info me-2"></i> Funcionalidades</h5>
+                            <ul>
+                                <li>Registro de movimentação entre locais (Com placar de pátio em tempo real).</li>
+                                <li>Registro de Coleta e Entrega.</li>
+                                <li>Registro de Movimentações 293 ADM.</li>
+                                <li>Registro de Movimentações 294 Manutenção.</li>
+                                <li>Registro de Visitantes e Pessoas Autorizadas.</li>
+                                <li>Exportação completa de todos os registros para uma única planilha Excel.</li>
+                                <li>Exportação do Dashboard em PDF com gráficos.</li>
+                                <li>Automação para exportação diária de relatórios (PDF e XLSX) à meia-noite.</li>
+                                <li>Blocos de informações da aba Ponto e logs do sistema no Dashboard.</li>
+                                <li>Bloco de logs com estilo de terminal.</li>
+                                <li>**Gerenciamento de usuários (Desativado no front-end para futura implementação com back-end).**</li>
+                                <li>Sistema de logs com exportação por senha mestra.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-laptop-code me-2"></i> Tecnologias Utilizadas</h5>
+                            <ul>
+                                <li><strong>HTML5:</strong> Estrutura da página.</li>
+                                <li><strong>CSS3:</strong> Estilização, incluindo modo escuro e efeito glassmorphism.</li>
+                                <li><strong>JavaScript (ES6+):</strong> Lógica de programação e manipulação do DOM.</li>
+                                <li><strong>Bootstrap 5:</strong> Componentes e layout responsivo.</li>
+                                <li><strong>Chart.js:</strong> Para a criação dos gráficos do dashboard.</li>
+                                <li><strong>SheetJS / XLSX:</strong> Para a exportação de dados para planilhas.</li>
+                                <li><strong>jsPDF & html2canvas:</strong> Para a exportação do Dashboard em PDF.</li>
+                                <li><strong>Font Awesome:</strong> Biblioteca de ícones.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-code-branch me-2"></i> Versão e Desenvolvimento</h5>
+                            <p><strong>Versão:</strong> 2.0.5 Teste</p>
+                            <p><strong>Desenvolvedor:</strong> Eder Prioli - AllSec TI</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-exclamation-triangle me-2"></i> Observações</h5>
+                            <p>Este sistema foi desenvolvido como uma aplicação web simples, focada em praticidade e uso local. Todos os dados são salvos diretamente no navegador (LocalStorage), sem a necessidade de banco de dados ou conexão com a internet. Por isso, a exportação regular dos dados é recomendada para fins de backup. O agendamento de tarefas diárias depende que o navegador esteja aberto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Cadastrar Novo Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userIdx" value="">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userCpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="userCpf">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userCel" class="form-label">Celular</label>
+                            <input type="text" class="form-control" id="userCel">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userUsername" class="form-label">Usuário</label>
+                            <input type="text" class="form-control" id="userUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userPassword" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userConfirmPassword" class="form-label">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="userConfirmPassword" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" onclick="showToast('Esta funcionalidade requer um back-end.')" disabled>Salvar Usuário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Confirmação</h5></div>
+                <div class="modal-body" id="confirmModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container">
+        <div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="myToast">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hidden-pdf-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let itemSelecionado = null;
+        let confirmModal = null;
+        let userModal = null;
+        let myToast = null;
+        let masterPasswordModal = null;
+        const MASTER_PASSWORD = "8080Ipmask@root";
+        let currentUser = {
+            usuario: 'admin', 
+            nome: 'Admin'
+        };
+        let userToEditIndex = -1;
+        const headersMap = {
+            'coleta-e-entrega': ['motorista', 'frota', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'entre-locais': ['cavalo', 'carreta1', 'carreta2', 'horachegada', 'horasaida', 'motchegada', 'motsaida', 'origem', 'destino'],
+            'adm-293': ['motorista', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'manutencao-294': ['motorista', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'clientes-visitantes': ['nome', 'empresa', 'placacpf', 'marcamodelo', 'hora', 'setor']
+        };
+        const localStorageKeys = {
+            'coleta-e-entrega': 'coleta-e-entrega-data',
+            'entre-locais': 'entre-locais-data',
+            'adm-293': 'adm-293-data',
+            'manutencao-294': 'manutencao-294-data',
+            'clientes-visitantes': 'clientes-visitantes-data',
+            'logs': 'logs'
+        };
+        const motoristasColeta = ["Gilberto", "Wender", "Moisés", "Agregado"];
+        const frotasColeta = ["10421", "10424", "Agregado"];
+        const setoresOutros = ["Retira", "ADM", "RH", "DP", "Posto", "Almoxarifado", "TI", "Gerência", "Serviços"];
+        
+        let motoristasDisponiveis = [...motoristasColeta];
+        let frotasDisponiveis = [...frotasColeta];
+        const today = new Date().toISOString().split('T')[0];
+        const chartInstances = {};
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            masterPasswordModal = new bootstrap.Modal(document.getElementById('masterPasswordModal'));
+            myToast = new bootstrap.Toast(document.getElementById('myToast'));
+
+            verificarDisponibilidade();
+            render('coleta-e-entrega');
+            render('entre-locais');
+            render('adm-293');
+            render('manutencao-294');
+            render('clientes-visitantes');
+            renderDashboard(today);
+            agendarTarefasDiarias();
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('shown.bs.tab', (e) => {
+                    const abaId = e.target.getAttribute('href').substring(1);
+                    if (abaId === 'coleta-e-entrega') {
+                         verificarDisponibilidade();
+                    } else if (abaId === 'clientes-visitantes') {
+                        renderDropdown('clientes-visitantes-setor', setoresOutros);
+                    } else if (abaId === 'dashboard') {
+                        renderDashboard(today);
+                    }
+                    reiniciarBotoes(abaId);
+                    limparCampos(abaId);
+                });
+            });
+            document.getElementById('coleta-e-entrega-search').addEventListener('input', (e) => render('coleta-e-entrega', e.target.value));
+            document.getElementById('entre-locais-search').addEventListener('input', (e) => render('entre-locais', e.target.value));
+            document.getElementById('adm-293-search').addEventListener('input', (e) => render('adm-293', e.target.value));
+            document.getElementById('manutencao-294-search').addEventListener('input', (e) => render('manutencao-294', e.target.value));
+            document.getElementById('clientes-visitantes-search').addEventListener('input', (e) => render('clientes-visitantes', e.target.value));
+        });
+
+        function renderDropdown(elementId, options) {
+            const select = document.getElementById(elementId);
+            if (!select) return;
+            select.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Selecione';
+            select.appendChild(defaultOption);
+            options.forEach(optionText => {
+                const option = document.createElement('option');
+                option.textContent = optionText;
+                option.value = optionText;
+                select.appendChild(option);
+            });
+        }
+        
+        function showToast(message) {
+            document.getElementById('toast-message').textContent = message;
+            myToast.show();
+        }
+
+        function getDadosAba(aba) {
+            try {
+                return JSON.parse(localStorage.getItem(localStorageKeys[aba]) || '[]');
+            } catch (e) {
+                console.error(`Erro ao carregar dados da aba '${aba}':`, e);
+                return [];
+            }
+        }
+
+        function getLogs() {
+            try {
+                return JSON.parse(localStorage.getItem('logs') || '[]');
+            } catch (e) {
+                console.error('Erro ao carregar logs:', e);
+                return [];
+            }
+        }
+
+        function addLog(action, details) {
+            const logs = getLogs();
+            const now = new Date();
+            const logEntry = {
+                timestamp: now.toISOString(),
+                user: 'Acesso Direto',
+                action,
+                details
+            };
+            logs.push(logEntry);
+            localStorage.setItem('logs', JSON.stringify(logs));
+        }
+        
+        function salvar(aba) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            const dados = {};
+            dados.data = new Date().toISOString().split('T')[0];
+            inputs.forEach(inp => {
+                const key = inp.id.substring(inp.id.indexOf(aba) + aba.length + 1);
+                dados[key] = inp.value;
+            });
+            
+            let lista = getDadosAba(aba);
+            
+            if (itemSelecionado && itemSelecionado.aba === aba && itemSelecionado.index !== null) {
+                const oldData = lista[itemSelecionado.index];
+                lista[itemSelecionado.index] = { ...oldData, ...dados };
+                addLog('Edição', { aba, oldData, newData: dados });
+                showToast("Item editado com sucesso!");
+            } else {
+                lista.push(dados);
+                addLog('Inserção', { aba, newData: dados });
+                showToast("Item salvo com sucesso!");
+            }
+            localStorage.setItem(localStorageKeys[aba], JSON.stringify(lista));
+            render(aba);
+            limparCampos(aba);
+            const tableContainer = document.querySelector(`#${aba} .table-container`);
+            tableContainer.scrollTo({ top: tableContainer.scrollHeight, behavior: 'smooth' });
+            renderDashboard(today);
+            if (aba === 'coleta-e-entrega') {
+                verificarDisponibilidade();
+            }
+        }
+        
+        function render(aba, filtro = '') {
+            const listaOriginal = getDadosAba(aba);
+            const tbody = document.querySelector(`#lista-${aba} tbody`);
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const listaFiltrada = listaOriginal.filter(item => {
+                if (!filtro) return true;
+                const filtroLowerCase = filtro.toLowerCase();
+                return Object.values(item).some(value => 
+                    value && value.toString().toLowerCase().includes(filtroLowerCase)
+                );
+            });
+            
+            listaFiltrada.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => selecionarItem(tr, aba, index);
+                
+                const tdData = document.createElement('td');
+                tdData.textContent = item.data ? new Date(item.data).toLocaleDateString('pt-BR') : '';
+                tr.appendChild(tdData);
+
+                const itemKeys = headersMap[aba];
+                itemKeys.forEach(key => {
+                    const td = document.createElement('td');
+                    td.textContent = item[key] || '';
+                    if (aba === 'clientes-visitantes' && key === 'setor') {
+                        if (item[key] === 'Posto') td.classList.add('highlight-post');
+                        if (item[key] === 'Retira') td.classList.add('highlight-retira');
+                        if (item[key] === 'RH') td.classList.add('highlight-rh');
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            atualizarContadores(aba, listaOriginal);
+            reiniciarBotoes(aba);
+        }
+        
+        function atualizarContadores(aba, lista) {
+            const registrosDoDia = lista.filter(item => item.data === today);
+
+            if (aba === 'entre-locais') {
+                const chegadas = registrosDoDia.filter(item => item.horachegada).length;
+                const saidas = registrosDoDia.filter(item => item.horasaida).length;
+                document.getElementById('entre-locais-patio').textContent = `Chegadas: ${chegadas}`;
+                document.getElementById('entre-locais-total').textContent = `Saídas: ${saidas}`;
+            }
+        }
+        
+        function selecionarItem(tr, aba, index) {
+            const tabela = document.querySelector(`#lista-${aba}`);
+            if (!tabela) return;
+            const todasTr = tabela.querySelectorAll('tr');
+            todasTr.forEach(row => row.classList.remove('selected'));
+            tr.classList.add('selected');
+            itemSelecionado = { aba, index };
+            const lista = getDadosAba(aba);
+            const item = lista[index];
+            preencherCampos(aba, item);
+            const editarBtn = document.getElementById(`editar-btn-${aba}`);
+            const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
+            editarBtn.disabled = false;
+            excluirBtn.disabled = false;
+        }
+
+        function preencherCampos(aba, item) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            inputs.forEach(inp => {
+                const key = inp.id.substring(inp.id.indexOf(aba) + aba.length + 1);
+                if (item[key] !== undefined) {
+                    if (inp.tagName === 'SELECT') {
+                        const options = Array.from(inp.options);
+                        const valorEncontrado = options.find(option => option.value === item[key]);
+                        if (valorEncontrado) {
+                            inp.value = item[key];
+                        } else {
+                            const novaOpcao = document.createElement('option');
+                            novaOpcao.value = item[key];
+                            novaOpcao.textContent = item[key];
+                            inp.appendChild(novaOpcao);
+                            inp.value = item[key];
+                        }
+                    } else {
+                        inp.value = item[key];
+                    }
+                } else {
+                    inp.value = '';
+                }
+            });
+        }
+
+        function confirmarEdicao(aba) {
+            if (itemSelecionado) {
+                document.getElementById('confirmModalBody').textContent = "Deseja editar este item?";
+                document.getElementById('confirmAction').className = 'btn btn-info';
+                document.getElementById('confirmAction').textContent = 'Editar';
+                document.getElementById('confirmAction').onclick = () => {
+                    salvar(aba);
+                    confirmModal.hide();
+                };
+                confirmModal.show();
+            }
+        }
+
+        function confirmarExclusao(aba) {
+            if (itemSelecionado) {
+                document.getElementById('confirmModalBody').textContent = "Deseja excluir este item?";
+                document.getElementById('confirmAction').className = 'btn btn-danger';
+                document.getElementById('confirmAction').textContent = 'Excluir';
+                document.getElementById('confirmAction').onclick = () => {
+                    excluirItem(aba, itemSelecionado.index);
+                    confirmModal.hide();
+                };
+                confirmModal.show();
+            }
+        }
+
+        function excluirItem(aba, index) {
+            const lista = getDadosAba(aba);
+            const deletedItem = lista.splice(index, 1);
+            localStorage.setItem(localStorageKeys[aba], JSON.stringify(lista));
+            addLog('Exclusão', { aba, deletedData: deletedItem[0] });
+            render(aba);
+            limparCampos(aba);
+            renderDashboard(today);
+            showToast("Item excluído com sucesso!");
+            if (aba === 'coleta-e-entrega') {
+                verificarDisponibilidade();
+            }
+        }
+
+        function reiniciarBotoes(aba) {
+            const editarBtn = document.getElementById(`editar-btn-${aba}`);
+            const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
+            if (editarBtn) editarBtn.disabled = true;
+            if (excluirBtn) excluirBtn.disabled = true;
+            itemSelecionado = null;
+        }
+
+        function limparCampos(aba) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            inputs.forEach(inp => {
+                if (inp.type === 'date' || inp.type === 'time' || inp.type === 'text' || inp.type === 'number' || inp.type === 'email') {
+                    inp.value = '';
+                } else if (inp.tagName === 'SELECT') {
+                    inp.selectedIndex = 0;
+                }
+            });
+        }
+
+        function verificarDisponibilidade() {
+            const coletaData = getDadosAba('coleta-e-entrega');
+            const motoristasEmUso = new Set();
+            const frotasEmUso = new Set();
+
+            coletaData.forEach(item => {
+                if (item.horasaida && !item.horachegada) {
+                    if (item.motorista) motoristasEmUso.add(item.motorista);
+                    if (item.frota && item.frota.toLowerCase() !== 'agregado') frotasEmUso.add(item.frota);
+                }
+            });
+            motoristasDisponiveis = motoristasColeta.filter(m => !motoristasEmUso.has(m));
+            frotasDisponiveis = frotasColeta.filter(f => !frotasEmUso.has(f) || f.toLowerCase() === 'agregado');
+            renderDropdown('coleta-e-entrega-motorista', motoristasDisponiveis);
+            renderDropdown('coleta-e-entrega-frota', frotasDisponiveis);
+        }
+        
+        function ordenarDadosPorDataEHora(lista, aba) {
+            const campoHora = {
+                'coleta-e-entrega': 'horasaida',
+                'entre-locais': 'horachegada', 
+                'adm-293': 'horasaida', 
+                'manutencao-294': 'horasaida', 
+                'clientes-visitantes': 'hora'
+            };
+            const campoDeHora = campoHora[aba] || 'data';
+            lista.sort((a, b) => {
+                const dataA = a.data;
+                const horaA = a[campoDeHora] || '00:00';
+                const dataB = b.data;
+                const horaB = b[campoDeHora] || '00:00';
+                const dateTimeA = new Date(`${dataA}T${horaA}`);
+                const dateTimeB = new Date(`${dataB}T${horaB}`);
+                return dateTimeA - dateTimeB;
+            });
+            return lista;
+        }
+
+        function exportarRelatorioCompleto() {
+            const wb = XLSX.utils.book_new();
+            const abas = ['coleta-e-entrega', 'entre-locais', 'adm-293', 'manutencao-294', 'clientes-visitantes'];
+            abas.forEach(aba => {
+                const data = getDadosAba(aba);
+                const headers = ['data', ...headersMap[aba]];
+                const dataWithHeaders = data.map(item => {
+                    const newObject = {};
+                    for (const key of headers) {
+                        newObject[key] = item[key];
+                    }
+                    return newObject;
+                });
+                if (dataWithHeaders.length > 0) {
+                    const ws = XLSX.utils.json_to_sheet(dataWithHeaders);
+                    const sheetName = document.querySelector(`a[href="#${aba}"]`).textContent;
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                }
+            });
+            if (wb.SheetNames.length === 0) {
+                showToast("Não há dados em nenhuma seção para exportar.");
+                return;
+            }
+            const dataHora = new Date();
+            const dataFormatada = `${dataHora.getFullYear()}-${(dataHora.getMonth() + 1).toString().padStart(2, '0')}-${dataHora.getDate().toString().padStart(2, '0')}_${dataHora.getHours().toString().padStart(2, '0')}-${dataHora.getMinutes().toString().padStart(2, '0')}`;
+            const filename = `biz_movimentacao_${dataFormatada}.xlsx`;
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            saveAs(new Blob([wbout], { type: 'application/octet-stream' }), filename);
+        }
+
+        function agendarTarefasDiarias() {
+            const agora = new Date();
+            const meiaNoite = new Date(agora);
+            meiaNoite.setDate(agora.getDate() + 1);
+            meiaNoite.setHours(0, 0, 0, 0);
+            const tempoParaMeiaNoite = meiaNoite.getTime() - agora.getTime();
+            setTimeout(() => {
+                executarTarefasDiarias();
+                agendarTarefasDiarias();
+            }, tempoParaMeiaNoite);
+        }
+
+        function executarTarefasDiarias() {
+            const hoje = new Date();
+            const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+            const isUltimoDia = hoje.getDate() === ultimoDiaDoMes;
+            showToast("Iniciando a emissão automática de relatórios...");
+            exportarRelatorioCompleto();
+            gerarRelatorioPDFDiario();
+            if (isUltimoDia) {
+                showToast("Fim de mês: Limpando os dados do Local Storage...");
+                limparDadosLocalStorage();
+            }
+        }
+        
+        function limparDadosLocalStorage() {
+            for (const key in localStorageKeys) {
+                localStorage.removeItem(localStorageKeys[key]);
+            }
+            showToast("Todos os dados do mês anterior foram apagados.");
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('darkModeToggle').querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+            renderDashboard(today);
+        }
+
+        function updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataHoje) {
+            // Coleta e Entrega
+            const saidasCE = dataColeta.filter(item => item.data === dataHoje && item.horasaida).length;
+            const retornadosCE = dataColeta.filter(item => item.data === dataHoje && item.horasaida && item.horachegada).length;
+            const faltaRetornarCE = saidasCE - retornadosCE;
+            document.getElementById('dashboard-ce-saidas').textContent = saidasCE;
+            document.getElementById('dashboard-ce-retornar').textContent = faltaRetornarCE > 0 ? faltaRetornarCE : 0;
+            
+            // Entre Locais
+            const chegadasEL = dataEntreLocais.filter(item => item.data === dataHoje && item.horachegada).length;
+            const saidasEL = dataEntreLocais.filter(item => item.data === dataHoje && item.horasaida).length;
+            document.getElementById('dashboard-el-chegadas').textContent = chegadasEL;
+            document.getElementById('dashboard-el-saidas').textContent = saidasEL;
+
+            // Motoristas Específicos
+            const saidaGilberto = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Gilberto').length;
+            const saidaWender = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Wender').length;
+            const saidaMoises = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Moisés').length;
+            document.getElementById('motorista-gilberto').textContent = saidaGilberto;
+            document.getElementById('motorista-wender').textContent = saidaWender;
+            document.getElementById('motorista-moises').textContent = saidaMoises;
+
+            // 293 ADM
+            const admDiario = dataADM.filter(item => item.data === dataHoje).length;
+            const admMensal = dataADM.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const totalKMMensalADM = admMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
+            const mediaKMMensalADM = admMensal.length > 0 ? (totalKMMensalADM / admMensal.length) : 0;
+            document.getElementById('dashboard-293adm-diario').textContent = admDiario;
+            document.getElementById('dashboard-293adm-km-mensal').textContent = `${mediaKMMensalADM.toFixed(0)}km`;
+
+            // 294 Manutenção
+            const manutDiario = dataManutencao.filter(item => item.data === dataHoje).length;
+            const manutMensal = dataManutencao.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const totalKMMensalManut = manutMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
+            const mediaKMMensalManut = manutMensal.length > 0 ? (totalKMMensalManut / manutMensal.length) : 0;
+            document.getElementById('dashboard-294manutencao-diario').textContent = manutDiario;
+            document.getElementById('dashboard-294manutencao-km-mensal').textContent = `${mediaKMMensalManut.toFixed(0)}km`;
+
+            // Clientes e Visitantes
+            const cvDiario = dataClientes.filter(item => item.data === dataHoje).length;
+            const cvMensal = dataClientes.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const mediaCVMensal = cvMensal.length > 0 ? (cvMensal.length / new Date().getDate()) : 0;
+            document.getElementById('dashboard-cv-diario').textContent = cvDiario;
+            document.getElementById('dashboard-cv-mensal').textContent = mediaCVMensal.toFixed(0);
+
+            const postoCount = dataClientes.filter(item => item.setor === 'Posto' && item.data === dataHoje).length;
+            const retiraCount = dataClientes.filter(item => item.setor === 'Retira' && item.data === dataHoje).length;
+            const rhCount = dataClientes.filter(item => item.setor === 'RH' && item.data === dataHoje).length;
+            document.getElementById('badge-posto').textContent = `Posto: ${postoCount}`;
+            document.getElementById('badge-retira').textContent = `Retira: ${retiraCount}`;
+            document.getElementById('badge-rh').textContent = `RH: ${rhCount}`;
+        }
+
+        function renderRecentActivity() {
+            const allLogs = getLogs();
+            allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const recentLogs = allLogs.slice(0, 5);
+            const listElement = document.getElementById('recent-logs-list');
+            listElement.innerHTML = '';
+            if (recentLogs.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'Nenhum registro recente.';
+                listElement.appendChild(li);
+                return;
+            }
+            recentLogs.forEach(log => {
+                const li = document.createElement('li');
+                const logDate = new Date(log.timestamp);
+                const logTime = `${logDate.toLocaleDateString('pt-BR')} ${logDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                let details = log.details.aba ? `Aba: ${log.details.aba}` : 'N/A';
+                if (log.details.aba) {
+                    const navLink = document.querySelector(`a[href="#${log.details.aba}"]`);
+                    details = navLink ? `Aba: ${navLink.textContent}` : `Aba: ${log.details.aba}`;
+                }
+                li.textContent = `${logTime} - Ação: ${log.action} - ${details}`;
+                listElement.appendChild(li);
+            });
+        }
+
+        function renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataHoje, container) {
+            destroyChart('dailyMovementChart');
+            const coletaDiario = dataColeta.filter(item => item.data === dataHoje).length;
+            const admDiario = dataADM.filter(item => item.data === dataHoje).length;
+            const manutDiario = dataManutencao.filter(item => item.data === dataHoje).length;
+            
+            const ctx = container.querySelector('#dailyMovementChart').getContext('2d');
+            chartInstances.dailyMovementChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Coleta e Entrega', '293 ADM', '294 Manutenção'],
+                    datasets: [
+                        { label: 'Movimentações', data: [coletaDiario, admDiario, manutDiario], backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(255, 159, 64, 0.8)', 'rgba(153, 102, 255, 0.8)'] }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+        
+        function renderDashboard(dataTarget) {
+            const dataColeta = getDadosAba('coleta-e-entrega');
+            const dataADM = getDadosAba('adm-293');
+            const dataManutencao = getDadosAba('manutencao-294');
+            const dataEntreLocais = getDadosAba('entre-locais');
+            const dataClientes = getDadosAba('clientes-visitantes');
+            updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataTarget);
+            renderRecentActivity();
+            const mainDashboard = document.getElementById('dashboard');
+            renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataTarget, mainDashboard);
+        }
+
+        function destroyChart(chartId) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+                delete chartInstances[chartId];
+            }
+        }
+
+        async function gerarPDFDoContainer(container, filename) {
+            const nav = document.querySelector('.navbar');
+            const navDisplay = nav.style.display;
+            nav.style.display = 'none';
+            const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true });
+            nav.style.display = navDisplay;
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            pdf.save(filename);
+        }
+
+        function exportarDashboardPDF() {
+            const dashboardElement = document.getElementById('dashboard');
+            const today = new Date();
+            const filename = `bizdiario_${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}_${today.getHours().toString().padStart(2, '0')}-${today.getMinutes().toString().padStart(2, '0')}.pdf`;
+            gerarPDFDoContainer(dashboardElement, filename).then(() => {
+                showToast("Relatório PDF exportado com sucesso!");
+            });
+        }
+
+        async function gerarRelatorioPDFDiario() {
+            const dataParaRelatorio = new Date();
+            dataParaRelatorio.setDate(dataParaRelatorio.getDate());
+            const dataFormatada = dataParaRelatorio.toISOString().split('T')[0];
+            const hiddenContainer = document.getElementById('hidden-pdf-container');
+            hiddenContainer.innerHTML = document.getElementById('dashboard').innerHTML;
+            const tituloRelatorio = hiddenContainer.querySelector('h3');
+            tituloRelatorio.textContent = `Painel de Monitoramento - Relatório Diário (${dataFormatada.split('-').reverse().join('/')})`;
+            const dataColeta = getDadosAba('coleta-e-entrega');
+            const dataADM = getDadosAba('adm-293');
+            const dataManutencao = getDadosAba('manutencao-294');
+            const dataEntreLocais = getDadosAba('entre-locais');
+            const dataClientes = getDadosAba('clientes-visitantes');
+            updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataFormatada);
+            renderRecentActivity(); 
+            renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataFormatada, hiddenContainer);
+            const filename = `bizdiario_${dataFormatada.replace(/-/g, '')}_0000.pdf`;
+            await gerarPDFDoContainer(hiddenContainer, filename);
+            hiddenContainer.innerHTML = '';
+            showToast("Relatório diário em PDF emitido automaticamente!");
+            renderDashboard(today);
+        }
+        
+        function editUser(index) {
+            showToast("Esta funcionalidade requer um back-end.");
+        }
+        function deleteUser(index) {
+            showToast("Esta funcionalidade requer um back-end.");
+        }
+
+        function exportarLogs() {
+            document.getElementById('masterPasswordInput').value = '';
+            document.getElementById('masterPasswordFeedback').textContent = '';
+            masterPasswordModal.show();
+        }
+
+        function confirmExportLogs() {
+            const password = document.getElementById('masterPasswordInput').value;
+            const feedbackElement = document.getElementById('masterPasswordFeedback');
+
+            if (password !== MASTER_PASSWORD) {
+                feedbackElement.textContent = 'Senha incorreta.';
+                return;
+            }
+
+            const logs = getLogs();
+            if (logs.length === 0) {
+                showToast("Nenhum log para exportar.");
+                masterPasswordModal.hide();
+                return;
+            }
+
+            let logText = "Log de Atividades do Sistema\n\n";
+            logs.forEach(log => {
+                const logDate = new Date(log.timestamp);
+                const timestampStr = `${logDate.toLocaleDateString('pt-BR')} ${logDate.toLocaleTimeString('pt-BR', { hour12: false })}`;
+                logText += `Data/Hora: ${timestampStr}\n`;
+                logText += `Usuário: ${log.user}\n`;
+                logText += `Ação: ${log.action}\n`;
+                logText += `Detalhes: ${JSON.stringify(log.details, null, 2)}\n\n`;
+            });
+
+            const blob = new Blob([logText], { type: "text/plain;charset=utf-8" });
+            const dataHora = new Date();
+            const filename = `biz_logs_${dataHora.getFullYear()}-${(dataHora.getMonth() + 1).toString().padStart(2, '0')}-${dataHora.getDate().toString().padStart(2, '0')}.txt`;
+            saveAs(blob, filename);
+            showToast("Logs exportados com sucesso!");
+            masterPasswordModal.hide();
+        }
+    </script>
+</body>
+</html>
             --navbar-border: #d1d1d6;
             --container-bg: rgba(255, 255, 255, 0.75);
             --container-border: #d1d1d6;
