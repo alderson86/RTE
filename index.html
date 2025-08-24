@@ -290,6 +290,8 @@
         .highlight-post{ color: #007aff; }
         .highlight-retira{ color: #dc3545; }
         .highlight-rh{ color: #28a745; }
+        
+        .info-text { font-size: 0.9rem; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -330,7 +332,7 @@
                     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sobre">Sobre</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <span class="me-2 text-truncate" style="max-width: 120px;">user_test</span>
+                    <span class="me-2 text-truncate" style="max-width: 120px;">User_test</span>
                     <button class="btn btn-icon" id="darkModeToggle"><i class="fa-solid fa-moon"></i></button>
                     <button class="btn btn-icon" onclick="showToast('O botão de logout foi desativado nesta versão do código.')"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
@@ -378,12 +380,16 @@
                             <div class="title">293 ADM</div>
                             <div class="sub-values">
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-293adm-diario">0</span>
-                                    <span class="label">Mov. Diária</span>
+                                    <span class="value" id="dashboard-293adm-dia">0</span>
+                                    <span class="label">Mov. Hoje</span>
                                 </div>
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-293adm-km-mensal">0km</span>
-                                    <span class="label">Média KM Mês</span>
+                                    <span class="value" id="dashboard-293adm-saidas">0</span>
+                                    <span class="label">Saídas Mês</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-293adm-media-km">0</span>
+                                    <span class="label">Média KM</span>
                                 </div>
                             </div>
                         </div>
@@ -392,12 +398,16 @@
                             <div class="title">294 Manutenção</div>
                             <div class="sub-values">
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-294manutencao-diario">0</span>
-                                    <span class="label">Mov. Diária</span>
+                                    <span class="value" id="dashboard-294manut-dia">0</span>
+                                    <span class="label">Mov. Hoje</span>
                                 </div>
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-294manutencao-km-mensal">0km</span>
-                                    <span class="label">Média KM Mês</span>
+                                    <span class="value" id="dashboard-294manut-saidas">0</span>
+                                    <span class="label">Saídas Mês</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-294manut-media-km">0</span>
+                                    <span class="label">Média KM</span>
                                 </div>
                             </div>
                         </div>
@@ -406,12 +416,16 @@
                             <div class="title">Clientes / Visitantes</div>
                             <div class="sub-values">
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-cv-diario">0</span>
-                                    <span class="label">Mov. Diária</span>
+                                    <span class="value" id="dashboard-cv-dia">0</span>
+                                    <span class="label">Hoje</span>
                                 </div>
                                 <div class="sub-value">
-                                    <span class="value" id="dashboard-cv-mensal">0</span>
-                                    <span class="label">Média Mês</span>
+                                    <span class="value" id="dashboard-cv-semana">0</span>
+                                    <span class="label">Semana</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-cv-mes">0</span>
+                                    <span class="label">Mês</span>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center mt-2 w-100">
@@ -425,15 +439,15 @@
                             <div class="title">Motoristas em Saída</div>
                             <div class="sub-values">
                                 <div class="sub-value">
-                                    <span class="value" id="motorista-gilberto">0</span>
+                                    <span class="value info-text" id="motorista-gilberto">---</span>
                                     <span class="label">Gilberto</span>
                                 </div>
                                 <div class="sub-value">
-                                    <span class="value" id="motorista-wender">0</span>
+                                    <span class="value info-text" id="motorista-wender">---</span>
                                     <span class="label">Wender</span>
                                 </div>
                                 <div class="sub-value">
-                                    <span class="value" id="motorista-moises">0</span>
+                                    <span class="value info-text" id="motorista-moises">---</span>
                                     <span class="label">Moisés</span>
                                 </div>
                             </div>
@@ -1316,13 +1330,25 @@
             showToast("Iniciando a emissão automática de relatórios...");
             exportarRelatorioCompleto();
             gerarRelatorioPDFDiario();
+            limparDadosDiarios();
             if (isUltimoDia) {
                 showToast("Fim de mês: Limpando os dados do Local Storage...");
-                limparDadosLocalStorage();
+                limparDadosMensais();
             }
         }
         
-        function limparDadosLocalStorage() {
+        function limparDadosDiarios() {
+            const dataHoje = new Date().toISOString().split('T')[0];
+            const abasDiarias = ['coleta-e-entrega', 'entre-locais'];
+            abasDiarias.forEach(aba => {
+                const dados = getDadosAba(aba);
+                const dadosFiltrados = dados.filter(item => item.data !== dataHoje);
+                localStorage.setItem(localStorageKeys[aba], JSON.stringify(dadosFiltrados));
+            });
+            showToast("Dados diários de Coleta e Entrega e Entre Locais limpos com sucesso.");
+        }
+
+        function limparDadosMensais() {
             for (const key in localStorageKeys) {
                 localStorage.removeItem(localStorageKeys[key]);
             }
@@ -1355,35 +1381,68 @@
             document.getElementById('dashboard-el-saidas').textContent = saidasEL;
 
             // Motoristas Específicos
-            const saidaGilberto = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Gilberto').length;
-            const saidaWender = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Wender').length;
-            const saidaMoises = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Moisés').length;
-            document.getElementById('motorista-gilberto').textContent = saidaGilberto;
-            document.getElementById('motorista-wender').textContent = saidaWender;
-            document.getElementById('motorista-moises').textContent = saidaMoises;
+            const saidasMotoristas = { "Gilberto": "---", "Wender": "---", "Moisés": "---" };
+            const saidasHoje = dataColeta.filter(item => item.data === dataHoje && item.horasaida && !item.horachegada);
+            saidasHoje.forEach(item => {
+                if (saidasMotoristas.hasOwnProperty(item.motorista)) {
+                    saidasMotoristas[item.motorista] = item.horasaida;
+                }
+            });
+            document.getElementById('motorista-gilberto').textContent = saidasMotoristas.Gilberto;
+            document.getElementById('motorista-wender').textContent = saidasMotoristas.Wender;
+            document.getElementById('motorista-moises').textContent = saidasMotoristas.Moisés;
+            
+            // Funções de cálculo para médias
+            function calcularMediaKm(data) {
+                const dataMes = data.filter(item => {
+                    const itemDate = new Date(item.data);
+                    const hojeDate = new Date();
+                    return itemDate.getMonth() === hojeDate.getMonth() && itemDate.getFullYear() === hojeDate.getFullYear();
+                });
+                const totalKm = dataMes.reduce((acc, item) => acc + (parseInt(item.kmchegada) - parseInt(item.kmsaida) || 0), 0);
+                const totalRegistros = dataMes.length;
+                return totalRegistros > 0 ? (totalKm / totalRegistros).toFixed(0) : 0;
+            }
+
+            function calcularMediaSemanal(data) {
+                const hoje = new Date();
+                const primeiroDiaSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
+                const registrosSemana = data.filter(item => new Date(item.data) >= primeiroDiaSemana);
+                return registrosSemana.length > 0 ? (registrosSemana.length / (hoje.getDay() + 1)).toFixed(0) : 0;
+            }
+
+            function calcularMediaMensal(data) {
+                const hoje = new Date();
+                const registrosMes = data.filter(item => {
+                    const itemDate = new Date(item.data);
+                    return itemDate.getMonth() === hoje.getMonth() && itemDate.getFullYear() === hoje.getFullYear();
+                });
+                return registrosMes.length > 0 ? (registrosMes.length / hoje.getDate()).toFixed(0) : 0;
+            }
 
             // 293 ADM
             const admDiario = dataADM.filter(item => item.data === dataHoje).length;
-            const admMensal = dataADM.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
-            const totalKMMensalADM = admMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
-            const mediaKMMensalADM = admMensal.length > 0 ? (totalKMMensalADM / admMensal.length) : 0;
-            document.getElementById('dashboard-293adm-diario').textContent = admDiario;
-            document.getElementById('dashboard-293adm-km-mensal').textContent = `${mediaKMMensalADM.toFixed(0)}km`;
+            const admSaidasMes = dataADM.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7)).length;
+            const mediaKMADM = calcularMediaKm(dataADM);
+            document.getElementById('dashboard-293adm-dia').textContent = admDiario;
+            document.getElementById('dashboard-293adm-saidas').textContent = admSaidasMes;
+            document.getElementById('dashboard-293adm-media-km').textContent = mediaKMADM;
 
             // 294 Manutenção
             const manutDiario = dataManutencao.filter(item => item.data === dataHoje).length;
-            const manutMensal = dataManutencao.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
-            const totalKMMensalManut = manutMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
-            const mediaKMMensalManut = manutMensal.length > 0 ? (totalKMMensalManut / manutMensal.length) : 0;
-            document.getElementById('dashboard-294manutencao-diario').textContent = manutDiario;
-            document.getElementById('dashboard-294manutencao-km-mensal').textContent = `${mediaKMMensalManut.toFixed(0)}km`;
+            const manutSaidasMes = dataManutencao.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7)).length;
+            const mediaKMManut = calcularMediaKm(dataManutencao);
+            document.getElementById('dashboard-294manut-dia').textContent = manutDiario;
+            document.getElementById('dashboard-294manut-saidas').textContent = manutSaidasMes;
+            document.getElementById('dashboard-294manut-media-km').textContent = mediaKMManut;
 
             // Clientes e Visitantes
             const cvDiario = dataClientes.filter(item => item.data === dataHoje).length;
-            const cvMensal = dataClientes.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
-            const mediaCVMensal = cvMensal.length > 0 ? (cvMensal.length / new Date().getDate()) : 0;
-            document.getElementById('dashboard-cv-diario').textContent = cvDiario;
-            document.getElementById('dashboard-cv-mensal').textContent = mediaCVMensal.toFixed(0);
+            const cvMediaSemana = calcularMediaSemanal(dataClientes);
+            const cvMediaMes = calcularMediaMensal(dataClientes);
+            document.getElementById('dashboard-cv-dia').textContent = cvDiario;
+            document.getElementById('dashboard-cv-semana').textContent = cvMediaSemana;
+            document.getElementById('dashboard-cv-mes').textContent = cvMediaMes;
 
             const postoCount = dataClientes.filter(item => item.setor === 'Posto' && item.data === dataHoje).length;
             const retiraCount = dataClientes.filter(item => item.setor === 'Retira' && item.data === dataHoje).length;
