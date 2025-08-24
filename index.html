@@ -2,803 +2,1568 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Zentry-RTE V2.0</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentry RTE-700</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        body {
-            background-color: #f0f2f5;
-            font-family: "Roboto", "SF Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            padding-bottom: 220px;
+        :root {
+            --bg-color: #f2f2f7;
+            --text-color: #000;
+            --navbar-bg: rgba(255, 255, 255, 0.75);
+            --navbar-border: #d1d1d6;
+            --container-bg: rgba(255, 255, 255, 0.75);
+            --container-border: #d1d1d6;
+            --header-bg: rgba(233, 233, 239, 0.75);
+            --header-border: #c8c2cc;
+            --table-hover: #f7f7f7;
+            --table-selected: #e6f0ff;
+            --input-bg: #fff;
+            --input-border: #c6c6c8;
+            --input-placeholder: #8e8e93;
+            --button-bg: #007aff;
+            --button-hover: #0a84ff;
+            --button-disabled: #c6c6c8;
+            --modal-bg: #fff;
+            --modal-border: #d1d1d6;
+            --modal-btn-secondary-bg: #e6e6eb;
+            --modal-btn-secondary-hover: #d1d1d6;
+            --modal-btn-danger-bg: #ff3d3d;
+            --modal-btn-danger-hover: #e03838;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --toast-bg: rgba(0, 0, 0, 0.85);
+            --toast-color: #fff;
+            --terminal-bg: #e6e6eb;
+            --terminal-text: #2c2c2e;
         }
-        .terminal {
-            background-color: #fff;
-            color: #333;
+        body.dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --navbar-bg: rgba(30, 30, 30, 0.75);
+            --navbar-border: #333;
+            --container-bg: rgba(30, 30, 30, 0.75);
+            --container-border: #333;
+            --header-bg: rgba(43, 43, 43, 0.75);
+            --header-border: #444;
+            --table-hover: #2b2b2b;
+            --table-selected: #3a3a3a;
+            --input-bg: #2b2b2b;
+            --input-border: #444;
+            --input-placeholder: #a0a0a0;
+            --button-bg: #005fcc;
+            --button-hover: #004599;
+            --button-disabled: #444;
+            --modal-bg: #1e1e1e;
+            --modal-border: #333;
+            --modal-btn-secondary-bg: #2b2b2b;
+            --modal-btn-secondary-hover: #444;
+            --modal-btn-danger-bg: #cc3333;
+            --modal-btn-danger-hover: #a02a2a;
+            --card-bg: #1e1e1e;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --toast-bg: rgba(255, 255, 255, 0.85);
+            --toast-color: #000;
+            --terminal-bg: #2c2c2e;
+            --terminal-text: #00ff7f;
+            color: var(--text-color) !important;
+        }
+        body { padding-top: 70px; background-color: var(--bg-color); color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; transition: background-color 0.3s ease; }
+        .glassmorphism {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: var(--container-bg);
+            border: 1px solid var(--container-border);
+        }
+        .navbar { background-color: var(--navbar-bg) !important; border-bottom: 1px solid var(--navbar-border); position: fixed; top: 0; left: 0; right: 0; z-index: 1040; transition: background-color 0.3s ease; }
+        .navbar-brand { color: var(--text-color) !important; }
+        .nav-tabs .nav-link { color: var(--text-color); border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: border-bottom-color 0.3s ease, color 0.3s ease; }
+        .nav-tabs .nav-link.active { color: var(--button-bg); border-bottom-color: var(--button-bg); }
+        .fixed-bottom-form { 
             padding: 15px;
-            font-family: monospace;
-            height: 500px;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-            white-space: pre-wrap;
-            font-size: 13px;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 1030; border-radius: 8px 8px 0 0; 
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); 
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
         }
-        .terminal div {
-            cursor: pointer;
-            padding: 4px 0;
-            border-bottom: 1px solid #eee;
-            position: relative;
+        .table-container { 
+            max-height: 60vh; overflow-y: auto; border-radius: 8px; 
+            margin: 10px;
         }
-        .terminal div:hover {
-            background-color: #f0f0f0;
+        .list-table { width: 100%; border-collapse: collapse; }
+        .list-table th, .list-table td { padding: 4px 15px; white-space: nowrap; border: none; text-align: left; }
+        .list-table tr { cursor: pointer; background-color: transparent; transition: background-color 0.2s ease; }
+        .list-table tr:hover { background-color: var(--table-hover); }
+        .list-table tr.selected { background-color: var(--table-selected); }
+        .form-control, .form-select { 
+            border-radius: 5px; background-color: var(--input-bg); color: var(--text-color); 
+            border: 1px solid var(--input-border); padding: 8px 12px; font-size: 1rem; 
+            transition: background-color 0.3s ease, border-color 0.3s ease; 
         }
-        .terminal input[type="checkbox"] {
-            margin-right: 10px;
+        .form-control::placeholder { color: var(--input-placeholder); }
+        .fixed-bottom-form .form-control, .fixed-bottom-form .form-select {
+            width: 100%; height: auto; padding: 10px 15px; font-size: 1rem;
+            color: var(--text-color); background-color: var(--input-bg); background-image: none;
+            border: 1px solid var(--input-border); box-shadow: none;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
         }
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #fff;
-            border-top: 1px solid #ddd;
-            padding: 10px 15px;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        .fixed-bottom-form .row > div { padding-right: 5px; padding-left: 5px; }
+        .btn-icon { 
+            width: 40px; height: 40px; border-radius: 8px; background-color: transparent; border: none; color: var(--button-bg); 
+            display: flex; justify-content: center; align-items: center; font-size: 1.2rem;
+            transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
         }
-        .form-control, .form-select, .btn {
-            font-size: 0.85rem;
-            border-radius: 8px;
+        .btn-icon:hover { background-color: rgba(0, 122, 255, 0.1); transform: scale(1.05); cursor: pointer; }
+        .btn-icon:disabled { color: var(--button-disabled); cursor: not-allowed; background-color: transparent; }
+        .modal-content { border-radius: 10px; border: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); background-color: var(--modal-bg); color: var(--text-color); }
+        .modal-header { border-bottom: 1px solid var(--modal-border); padding: 15px; }
+        .modal-title { font-size: 1.3rem; font-weight: 500; }
+        .modal-body { padding: 15px; }
+        .modal-footer { border-top: 1px solid var(--modal-border); padding: 15px; display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-footer button { border-radius: 8px; padding: 10px 15px; font-size: 1rem; }
+        .modal-footer .btn-secondary { background-color: var(--modal-btn-secondary-bg); color: var(--text-color); border: 1px solid var(--input-border); transition: background-color 0.2s ease; }
+        .modal-footer .btn-secondary:hover { background-color: var(--modal-btn-secondary-hover); }
+        .modal-footer .btn-danger { background-color: var(--modal-btn-danger-bg); color: #fff; border: none; transition: background-color 0.2s ease; }
+        .modal-footer .btn-danger:hover { background-color: var(--modal-btn-danger-hover); }
+        .nav-tabs { border-bottom: 1px solid var(--navbar-border); }
+        .table-header-sticky { 
+            position: sticky; top: 0; background: var(--header-bg); border-radius: 8px 8px 0 0; z-index: 1020; 
+            transition: background-color 0.3s ease;
         }
-        .form-control, .form-select {
-            height: 34px;
+        .table-header-sticky .search-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid var(--header-border);
         }
-        .form-container {
-            overflow-x: auto;
+        .info-container { display: flex; gap: 10px; font-size: 0.9rem; flex-wrap: wrap; }
+        .info-container span { background: var(--input-border); padding: 5px 8px; border-radius: 5px; color: var(--text-color); }
+        .search-container { flex-grow: 1; padding-right: 15px; }
+        .search-input { width: 100%; padding: 8px 12px; border-radius: 5px; border: 1px solid var(--input-border); background-color: var(--input-bg); color: var(--text-color); }
+        .list-table thead th {
+            position: sticky; top: 50px; background: var(--header-bg); border-bottom: 1-px solid var(--header-border); z-index: 1010;
         }
-        #placa5 {
-            text-transform: uppercase;
+        .tab-pane.fade {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
         }
-        .nav-tabs .nav-link {
-            color: #495057;
+        .tab-pane.fade.show {
+            opacity: 1;
         }
-        .nav-tabs .nav-link.active {
-            color: #0d6efd;
-            background-color: #fff;
-            border-color: #dee2e6 #dee2e6 #fff;
+        .tab-pane .list-table tbody tr {
+            animation: fadeIn 0.5s ease-in-out;
         }
-        /* --- Estilos da Aba Agenda --- */
-        .agenda-container {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 20px;
-            height: 520px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .calendar-section, .clock-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            overflow-y: auto;
-        }
-        #calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        #calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
-        .calendar-day-name {
-            font-weight: 500;
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-        .calendar-day {
-            padding: 8px 4px;
-            cursor: pointer;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-            position: relative;
-        }
-        .calendar-day:hover {
-            background-color: #e9ecef;
-        }
-        .calendar-day.today {
-            background-color: #0d6efd;
-            color: white;
-            font-weight: bold;
-        }
-        .calendar-day.has-event::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background-color: #dc3545;
-            border-radius: 50%;
-        }
-        #live-clock {
-            font-size: 3.5rem;
-            font-weight: 700;
-            text-align: center;
-            color: #343a40;
+        .chart-container {
+            width: 100%;
+            height: 400px;
             margin-bottom: 20px;
+            position: relative;
         }
-        #appointments-list h5 {
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 10px;
+        .frota-status-green { color: green; font-weight: bold; }
+        .frota-status-red { color: red; font-weight: bold; }
+        .frota-status-warning { color: orange; font-weight: bold; }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .dashboard-card .icon {
+            font-size: 2.5rem;
+            color: var(--button-bg);
             margin-bottom: 10px;
         }
-        .appointment-item {
-            font-size: 0.9rem; padding: 5px;
-        }
-        /* --- Alerta Customizado --- */
-        #custom-alert {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 400px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
-            z-index: 2000;
-            padding: 25px;
-            text-align: center;
-        }
-        #custom-alert-message {
+        .dashboard-card .title {
             font-size: 1.1rem;
-            margin-bottom: 20px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 5px;
         }
+        .dashboard-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .dashboard-card .value.warning {
+            color: orange;
+        }
+        .dashboard-card .sub-values {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .dashboard-card .sub-value {
+            font-size: 1rem;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .dashboard-card .sub-value .label {
+            font-size: 0.8rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .dashboard-chart-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+        #hidden-pdf-container {
+            position: absolute;
+            left: -9999px;
+            width: 800px;
+            height: auto;
+            background: #fff;
+            color: #000;
+        }
+        .dashboard-terminal-card {
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--container-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .dashboard-terminal-card .title {
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .terminal-log-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: var(--terminal-text);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .terminal-log-list li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 2px 0;
+        }
+        /* Estilos da aba Sistema */
+        .sistema-container .btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+        }
+        .user-list-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .btn-desabilitado {
+            cursor: not-allowed;
+            opacity: 0.65;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .highlight-post{ color: #007aff; }
+        .highlight-retira{ color: #dc3545; }
+        .highlight-rh{ color: #28a745; }
     </style>
 </head>
-<body class="p-3">
-
-    <h3 class="mb-3">Zentry-RTE V2.0</h3>
-    <h10 class="mb-3">V2.0 / AllSec TI </h10>
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Entre Locais</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Coleta e entrega</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">293 ADM</button>  
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">294 Manutenção</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">Retira</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">Registro de Ocorrência</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab7-tab" data-bs-toggle="tab" data-bs-target="#tab7" type="button" role="tab" aria-controls="tab7" aria-selected="false">🗓️ Agenda</button>
-        </li>
-    </ul>
-
-    <div class="tab-content pt-3" id="myTabContent">
-        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap">
-                <input type="text" id="filtro1" class="form-control" placeholder="🔍 Buscar por cavalo, motorista ou data..." style="max-width: 300px;">
-                <select id="ordenarPor1" class="form-select" style="width: 200px;">
-                    <option value="data">Ordenar por Data</option>
-                    <option value="cavalo">Ordenar por Cavalo</option>
-                    <option value="motChegada">Ordenar por Mot. Chegada</option>
-                    <option value="motSaida">Ordenar por Mot. Saída</option>
-                </select>
-            </div>
-            <div class="terminal mb-4" id="output1"></div>
-        </div>
-        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap">
-                <input type="text" id="filtro2" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
-                <select id="ordenarPor2" class="form-select" style="width: 200px;">
-                    <option value="data">Ordenar por Data</option>
-                    <option value="motorista">Ordenar por Motorista</option>
-                    <option value="frota">Ordenar por Frota</option>
-                </select>
-            </div>
-            <div class="terminal mb-4" id="output2"></div>
-        </div>
-        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap">
-                <input type="text" id="filtro3" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
-                <select id="ordenarPor3" class="form-select" style="width: 200px;">
-                    <option value="data">Ordenar por Data</option>
-                    <option value="motorista">Ordenar por Motorista</option>
-                    <option value="frota">Ordenar por Frota</option>
-                </select>
-            </div>
-            <div class="terminal mb-4" id="output3"></div>
-        </div>
-        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap">
-                <input type="text" id="filtro4" class="form-control" placeholder="🔍 Buscar por motorista, frota ou data..." style="max-width: 300px;">
-                <select id="ordenarPor4" class="form-select" style="width: 200px;">
-                    <option value="data">Ordenar por Data</option>
-                    <option value="motorista">Ordenar por Motorista</option>
-                    <option value="frota">Ordenar por Frota</option>
-                </select>
-            </div>
-            <div class="terminal mb-4" id="output4"></div>
-        </div>
-        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
-            <div class="mb-2 d-flex gap-2 flex-wrap">
-                <input type="text" id="filtro5" class="form-control" placeholder="🔍 Buscar por nome, placa ou data..." style="max-width: 300px;">
-                <select id="ordenarPor5" class="form-select" style="width: 200px;">
-                    <option value="data">Ordenar por Data</option>
-                    <option value="placa">Ordenar por Placa</option>
-                    <option value="nome">Ordenar por Nome</option>
-                </select>
-            </div>
-            <div class="terminal mb-4" id="output5"></div>
-        </div>
-        <div class="tab-pane fade" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
-             <div class="terminal mb-4" id="output6"></div>
-        </div>
-        <div class="tab-pane fade" id="tab7" role="tabpanel" aria-labelledby="tab7-tab">
-            <div class="agenda-container">
-                <div class="calendar-section">
-                    <div id="calendar-header">
-                        <button class="btn btn-outline-primary btn-sm" id="prev-month">◄</button>
-                        <h4 id="month-year"></h4>
-                        <button class="btn btn-outline-primary btn-sm" id="next-month">►</button>
-                    </div>
-                    <div id="calendar-grid"></div>
+<body>
+    <div class="modal fade" id="masterPasswordModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Acesso Restrito</h5>
                 </div>
-                <div class="clock-section">
-                    <div id="live-clock"></div>
-                    <div id="appointments-list">
-                        <h5>Compromissos e Alertas</h5>
-                        <div id="appointments-content"></div>
-                    </div>
+                <div class="modal-body">
+                    <p>Por favor, insira a senha mestra para exportar os logs.</p>
+                    <input type="password" class="form-control" id="masterPasswordInput" placeholder="Senha Mestra">
+                    <div id="masterPasswordFeedback" class="mt-2 text-danger"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmExportLogs()">Exportar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer id="form-container-footer">
-        </footer>
+    <div id="systemContent">
+        <nav class="navbar navbar-expand-lg navbar-light glassmorphism">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="https://zentry.kr/assets/common/zentry-logo.png" style="width: 80px; height: 40px; margin-right: 10px;">
+                    RTE - 700
+                </a>
+                <ul class="nav nav-tabs mx-auto" id="myTab" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#coleta-e-entrega">Coleta e entrega</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#entre-locais">Entre locais</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#adm-293">293 ADM</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#manutencao-294">294 Manutenção</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#clientes-visitantes">Clientes / Visitantes</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sistema">Sistema</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sobre">Sobre</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="me-2 text-truncate" style="max-width: 120px;">Bem-vindo!</span>
+                    <button class="btn btn-icon" id="darkModeToggle"><i class="fa-solid fa-moon"></i></button>
+                    <button class="btn btn-icon" onclick="showToast('O botão de logout foi desativado nesta versão do código.')"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </div>
+        </nav>
 
-    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="eventModalLabel">Agendar Compromisso/Alerta</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" id="eventDate">
-            <div class="mb-3">
-              <label for="eventDescription" class="form-label">Descrição</label>
-              <input type="text" class="form-control" id="eventDescription" placeholder="Ex: Reunião de equipe">
+        <div class="tab-content container mt-3 mb-5">
+            <div class="tab-pane fade show active" id="dashboard">
+                <div class="container p-3 mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="mb-0">Painel de Monitoramento</h3>
+                        <button class="btn btn-primary" onclick="exportarDashboardPDF()"><i class="fa-solid fa-file-pdf me-2"></i>Exportar PDF</button>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-truck-ramp-box icon"></i>
+                            <div class="title">Coleta e Entrega</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-ce-saidas">0</span>
+                                    <span class="label">Saídas</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-ce-retornar">0</span>
+                                    <span class="label">Falta Retornar</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-truck-moving icon"></i>
+                            <div class="title">Entre Locais</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-el-chegadas">0</span>
+                                    <span class="label">Chegadas</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-el-saidas">0</span>
+                                    <span class="label">Saídas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-building-user icon"></i>
+                            <div class="title">293 ADM</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-293adm-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-293adm-km-mensal">0km</span>
+                                    <span class="label">Média KM Mês</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-tools icon"></i>
+                            <div class="title">294 Manutenção</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-294manutencao-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-294manutencao-km-mensal">0km</span>
+                                    <span class="label">Média KM Mês</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-user-group icon"></i>
+                            <div class="title">Clientes / Visitantes</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-cv-diario">0</span>
+                                    <span class="label">Mov. Diária</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="dashboard-cv-mensal">0</span>
+                                    <span class="label">Média Mês</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2 w-100">
+                                <span class="badge rounded-pill bg-primary mx-1" id="badge-posto">Posto: 0</span>
+                                <span class="badge rounded-pill bg-danger mx-1" id="badge-retira">Retira: 0</span>
+                                <span class="badge rounded-pill bg-success mx-1" id="badge-rh">RH: 0</span>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <i class="fa-solid fa-user-gear icon"></i>
+                            <div class="title">Motoristas em Saída</div>
+                            <div class="sub-values">
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-gilberto">0</span>
+                                    <span class="label">Gilberto</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-wender">0</span>
+                                    <span class="label">Wender</span>
+                                </div>
+                                <div class="sub-value">
+                                    <span class="value" id="motorista-moises">0</span>
+                                    <span class="label">Moisés</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-terminal-card">
+                            <div class="title"><i class="fa-solid fa-terminal me-2"></i>Logs do Sistema</div>
+                            <ul id="recent-logs-list" class="terminal-log-list"></ul>
+                            <div class="d-flex justify-content-end mt-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="exportarLogs()">Exportar Logs</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-chart-container mt-4">
+                        <h5 class="text-center mb-3">Movimentação Diária (Hoje)</h5>
+                        <div class="chart-container"><canvas id="dailyMovementChart"></canvas></div>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-              <label for="eventTime" class="form-label">Horário do Alerta</label>
-              <input type="time" class="form-control" id="eventTime">
+
+            <div class="tab-pane fade" id="coleta-e-entrega">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="coleta-e-entrega-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-coleta-e-entrega">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Frota</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-coleta-e-entrega">
+                        <div class="col-md-auto">
+                            <select id="coleta-e-entrega-motorista" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <select id="coleta-e-entrega-frota" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="coleta-e-entrega-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="coleta-e-entrega-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="coleta-e-entrega-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="coleta-e-entrega-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('coleta-e-entrega')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-coleta-e-entrega" disabled onclick="confirmarEdicao('coleta-e-entrega')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-coleta-e-entrega" disabled onclick="confirmarExclusao('coleta-e-entrega')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary" id="saveEvent">Salvar</button>
-          </div>
+
+            <div class="tab-pane fade" id="entre-locais">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="entre-locais-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div class="info-container">
+                                <span id="entre-locais-patio">No Pátio: 0</span>
+                                <span id="entre-locais-total">Total de Hoje: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-entre-locais">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cavalo</th>
+                                <th>Carreta 1</th>
+                                <th>Carreta 2</th>
+                                <th>Hora Chegada</th>
+                                <th>Hora Saída</th>
+                                <th>Mot. Chegada</th>
+                                <th>Mot. Saída</th>
+                                <th>Origem</th>
+                                <th>Destino</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-entre-locais">
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-cavalo" class="form-control" placeholder="Cavalo">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-carreta1" class="form-control" placeholder="Carreta 1">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-carreta2" class="form-control" placeholder="Carreta 2">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="entre-locais-horachegada" class="form-control" placeholder="Hora Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="entre-locais-horasaida" class="form-control" placeholder="Hora Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-motchegada" class="form-control" placeholder="Mot. Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-motsaida" class="form-control" placeholder="Mot. Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-origem" class="form-control" placeholder="Origem">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="entre-locais-destino" class="form-control" placeholder="Destino">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('entre-locais')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-entre-locais" disabled onclick="confirmarEdicao('entre-locais')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-entre-locais" disabled onclick="confirmarExclusao('entre-locais')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="adm-293">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="adm-293-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-adm-293">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-adm-293">
+                        <div class="col-md-auto">
+                            <input type="text" id="adm-293-motorista" class="form-control" placeholder="Motorista">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="adm-293-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="adm-293-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="adm-293-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="adm-293-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('adm-293')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-adm-293" disabled onclick="confirmarEdicao('adm-293')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-adm-293" disabled onclick="confirmarExclusao('adm-293')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="manutencao-294">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="manutencao-294-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-manutencao-294">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Hora de Saída</th>
+                                <th>Hora de Chegada</th>
+                                <th>KM Saída</th>
+                                <th>KM Chegada</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-manutencao-294">
+                        <div class="col-md-auto">
+                            <input type="text" id="manutencao-294-motorista" class="form-control" placeholder="Motorista">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="manutencao-294-horasaida" class="form-control" placeholder="Hora de Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="manutencao-294-horachegada" class="form-control" placeholder="Hora de Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="manutencao-294-kmsaida" class="form-control" placeholder="KM Saída">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="number" id="manutencao-294-kmchegada" class="form-control" placeholder="KM Chegada">
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('manutencao-294')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-manutencao-294" disabled onclick="confirmarEdicao('manutencao-294')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-manutencao-294" disabled onclick="confirmarExclusao('manutencao-294')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="clientes-visitantes">
+                <div class="table-container glassmorphism">
+                    <div class="table-header-sticky glassmorphism">
+                        <div class="search-row">
+                            <div class="search-container">
+                                <input type="text" id="clientes-visitantes-search" class="search-input" placeholder="Pesquisar...">
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <table class="list-table" id="lista-clientes-visitantes">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Nome</th>
+                                <th>Empresa</th>
+                                <th>Placa / CPF</th>
+                                <th>Marca / Modelo</th>
+                                <th>Hora</th>
+                                <th>Setor</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="fixed-bottom-form glassmorphism">
+                    <div class="row g-1 align-items-center justify-content-center" id="form-clientes-visitantes">
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-nome" class="form-control" placeholder="Nome">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-empresa" class="form-control" placeholder="Empresa">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-placacpf" class="form-control" placeholder="Placa / CPF">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="text" id="clientes-visitantes-marcamodelo" class="form-control" placeholder="Marca / Modelo">
+                        </div>
+                        <div class="col-md-auto">
+                            <input type="time" id="clientes-visitantes-hora" class="form-control" placeholder="Hora">
+                        </div>
+                        <div class="col-md-auto">
+                            <select id="clientes-visitantes-setor" class="form-select"></select>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="salvar('clientes-visitantes')"><i class="fa-solid fa-floppy-disk"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="editar-btn-clientes-visitantes" disabled onclick="confirmarEdicao('clientes-visitantes')"><i class="fa-solid fa-pencil"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" id="excluir-btn-clientes-visitantes" disabled onclick="confirmarExclusao('clientes-visitantes')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="col-md-auto">
+                            <button class="btn btn-icon" onclick="exportarRelatorioCompleto()"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="sistema">
+                <div class="container glassmorphism p-4 mt-3 sistema-container">
+                    <h3 class="mb-4 text-center">Gerenciamento de Usuários</h3>
+                    <p class="text-center text-muted mb-4">Esta seção está desativada no front-end e serve como base para uma futura implementação com um back-end.</p>
+                    <div class="d-grid gap-2 col-6 mx-auto mb-4">
+                        <button class="btn btn-primary" onclick="showToast('Esta funcionalidade requer um back-end.')"><i class="fa-solid fa-user-plus me-2"></i> Novo Usuário</button>
+                    </div>
+                    
+                    <div class="user-list-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Usuário</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="sobre">
+                <div class="container glassmorphism p-4 mt-3">
+                    <h3 class="text-center mb-4">Sobre o Sistema</h3>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-circle-info me-2"></i> Funcionalidades</h5>
+                            <ul>
+                                <li>Registro de movimentação entre locais (Com placar de pátio em tempo real).</li>
+                                <li>Registro de Coleta e Entrega.</li>
+                                <li>Registro de Movimentações 293 ADM.</li>
+                                <li>Registro de Movimentações 294 Manutenção.</li>
+                                <li>Registro de Visitantes e Pessoas Autorizadas.</li>
+                                <li>Exportação completa de todos os registros para uma única planilha Excel.</li>
+                                <li>Exportação do Dashboard em PDF com gráficos.</li>
+                                <li>Automação para exportação diária de relatórios (PDF e XLSX) à meia-noite.</li>
+                                <li>Blocos de informações da aba Ponto e logs do sistema no Dashboard.</li>
+                                <li>Bloco de logs com estilo de terminal.</li>
+                                <li>**Gerenciamento de usuários (Desativado no front-end para futura implementação com back-end).**</li>
+                                <li>Sistema de logs com exportação por senha mestra.</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-laptop-code me-2"></i> Tecnologias Utilizadas</h5>
+                            <ul>
+                                <li><strong>HTML5:</strong> Estrutura da página.</li>
+                                <li><strong>CSS3:</strong> Estilização, incluindo modo escuro e efeito glassmorphism.</li>
+                                <li><strong>JavaScript (ES6+):</strong> Lógica de programação e manipulação do DOM.</li>
+                                <li><strong>Bootstrap 5:</strong> Componentes e layout responsivo.</li>
+                                <li><strong>Chart.js:</strong> Para a criação dos gráficos do dashboard.</li>
+                                <li><strong>SheetJS / XLSX:</strong> Para a exportação de dados para planilhas.</li>
+                                <li><strong>jsPDF & html2canvas:</strong> Para a exportação do Dashboard em PDF.</li>
+                                <li><strong>Font Awesome:</strong> Biblioteca de ícones.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-code-branch me-2"></i> Versão e Desenvolvimento</h5>
+                            <p><strong>Versão:</strong> 2.0.5 Teste</p>
+                            <p><strong>Desenvolvedor:</strong> Eder Prioli - AllSec TI</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fa-solid fa-exclamation-triangle me-2"></i> Observações</h5>
+                            <p>Este sistema foi desenvolvido como uma aplicação web simples, focada em praticidade e uso local. Todos os dados são salvos diretamente no navegador (LocalStorage), sem a necessidade de banco de dados ou conexão com a internet. Por isso, a exportação regular dos dados é recomendada para fins de backup. O agendamento de tarefas diárias depende que o navegador esteja aberto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+    
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Cadastrar Novo Usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userIdx" value="">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userCpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="userCpf">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userCel" class="form-label">Celular</label>
+                            <input type="text" class="form-control" id="userCel">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail">
+                        </div>
+                        <div class="mb-3">
+                            <label for="userUsername" class="form-label">Usuário</label>
+                            <input type="text" class="form-control" id="userUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userPassword" class="form-label">Senha</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userConfirmPassword" class="form-label">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="userConfirmPassword" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" onclick="showToast('Esta funcionalidade requer um back-end.')" disabled>Salvar Usuário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="custom-alert">
-        <h4 id="custom-alert-title">⏰ Alerta de Compromisso!</h4>
-        <p id="custom-alert-message">Mensagem do alerta aqui.</p>
-        <div class="d-flex justify-content-center gap-2">
-            <button class="btn btn-warning" id="snooze-alert">Adiar (5 min)</button>
-            <button class="btn btn-danger" id="close-alert">Fechar</button>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Confirmação</h5></div>
+                <div class="modal-body" id="confirmModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction">Confirmar</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <div class="toast-container">
+        <div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="myToast">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hidden-pdf-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // --- CONFIGURAÇÃO INICIAL ---
-        const opcoes = ["010", "905", "004", "006", "908", "091", "094", "123", "095", "099", "906", "204", "920", "698", "240", "250", "302", "385", "404", "460", "501", "502", "570", "580", "607", "699", "912"];
-        
-        let editIndex = -1;
-        let activeTab = 1;
-        let selectedIndices = [];
-        let eventModal; // Variável para a instância do modal do Bootstrap
-        let currentAlert = null; // Guarda o alerta ativo
-        
-        // --- Formulários para cada aba ---
-        const forms = {
-            1: `...`, // Seu form 1 original
-            2: `...`, // Seu form 2 original
-            3: `...`, // Seu form 3 original
-            4: `...`, // Seu form 4 original
-            5: `...`, // Seu form 5 original
-            6: `
-                <form id="form6" action="https://formspree.io/f/YOUR_EMAIL_CODE_HERE" method="POST" class="d-flex flex-column gap-2">
-                     <textarea id="ocorrencia6" name="ocorrencia" class="form-control" rows="4" placeholder="Digite a ocorrência..."></textarea>
-                     <div class="d-flex justify-content-end gap-2">
-                         <button type="button" class="btn btn-success btn-sm" onclick="salvar()">💾 Salvar Localmente</button>
-                         <button type="submit" class="btn btn-info btn-sm">📧 Enviar por E-mail</button>
-                     </div>
-                </form>
-            `,
-            7: `<div class="text-center p-3">Selecione um dia no calendário para adicionar um compromisso.</div>`
+        let itemSelecionado = null;
+        let confirmModal = null;
+        let userModal = null;
+        let myToast = null;
+        let masterPasswordModal = null;
+        const MASTER_PASSWORD = "8080Ipmask@root";
+        let currentUser = {
+            usuario: 'admin', 
+            nome: 'Admin'
         };
-
-        // Preenchendo os formulários originais para manter o código limpo
-        forms[1] = `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data1" class="form-control" style="width: 110px;"><input type="text" id="cavalo1" class="form-control" placeholder="Cavalo" style="width: 80px;"><input type="text" id="carreta11" class="form-control" placeholder="Carreta 01" style="width: 90px;"><input type="text" id="carreta21" class="form-control" placeholder="Carreta 02" style="width: 90px;"><input type="time" id="hChegada1" class="form-control" style="width: 90px;"><input type="time" id="hSaida1" class="form-control" style="width: 90px;"><input type="text" id="motChegada1" class="form-control" placeholder="Mot. Chegada" style="width: 100px;"><input type="text" id="motSaida1" class="form-control" placeholder="Mot. Saída" style="width: 100px;"><select id="origem1" class="form-select" style="width: 90px;"><option value="">Origem</option></select><select id="destino1" class="form-select" style="width: 90px;"><option value="">Destino</option></select></div>`;
-        const commonFormPart = (n) => `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data${n}" class="form-control" style="width: 110px;"><input type="text" id="motorista${n}" class="form-control" placeholder="Motorista" style="width: 120px;"><input type="text" id="frota${n}" class="form-control" placeholder="Frota" style="width: 90px;"><input type="time" id="hSaida${n}" class="form-control" placeholder="H. saída" style="width: 90px;"><input type="time" id="hEntrada${n}" class="form-control" placeholder="H. entrada" style="width: 90px;"><input type="number" id="kmSaida${n}" class="form-control" placeholder="Km. saída" style="width: 100px;"><input type="number" id="kmEntrada${n}" class="form-control" placeholder="Km. entrada" style="width: 100px;"><input type="text" id="obs${n}" class="form-control" placeholder="Obs" style="flex-grow: 1;"></div>`;
-        forms[2] = commonFormPart(2);
-        forms[3] = commonFormPart(3);
-        forms[4] = commonFormPart(4);
-        forms[5] = `<div class="form-container d-flex flex-wrap gap-2 mb-2"><input type="date" id="data5" class="form-control" style="width: 110px;"><input type="text" id="nome5" class="form-control" placeholder="Nome" style="width: 150px;"><input type="text" id="placa5" class="form-control" placeholder="Placa" style="width: 100px;"><input type="text" id="modelo5" class="form-control" placeholder="Modelo" style="width: 120px;"><input type="time" id="horario5" class="form-control" placeholder="Horário" style="width: 90px;"><input type="text" id="setor5" class="form-control" placeholder="Setor" style="width: 100px;"><input type="text" id="obs5" class="form-control" placeholder="Obs" style="flex-grow: 1;"></div>`;
+        let userToEditIndex = -1;
+        const headersMap = {
+            'coleta-e-entrega': ['motorista', 'frota', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'entre-locais': ['cavalo', 'carreta1', 'carreta2', 'horachegada', 'horasaida', 'motchegada', 'motsaida', 'origem', 'destino'],
+            'adm-293': ['motorista', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'manutencao-294': ['motorista', 'horasaida', 'horachegada', 'kmsaida', 'kmchegada'],
+            'clientes-visitantes': ['nome', 'empresa', 'placacpf', 'marcamodelo', 'hora', 'setor']
+        };
+        const localStorageKeys = {
+            'coleta-e-entrega': 'coleta-e-entrega-data',
+            'entre-locais': 'entre-locais-data',
+            'adm-293': 'adm-293-data',
+            'manutencao-294': 'manutencao-294-data',
+            'clientes-visitantes': 'clientes-visitantes-data',
+            'logs': 'logs'
+        };
+        const motoristasColeta = ["Gilberto", "Wender", "Moisés", "Agregado"];
+        const frotasColeta = ["10421", "10424", "Agregado"];
+        const setoresOutros = ["Retira", "ADM", "RH", "DP", "Posto", "Almoxarifado", "TI", "Gerência", "Serviços"];
         
-        // --- FUNÇÕES PRINCIPAIS ---
+        let motoristasDisponiveis = [...motoristasColeta];
+        let frotasDisponiveis = [...frotasColeta];
+        const today = new Date().toISOString().split('T')[0];
+        const chartInstances = {};
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            masterPasswordModal = new bootstrap.Modal(document.getElementById('masterPasswordModal'));
+            myToast = new bootstrap.Toast(document.getElementById('myToast'));
 
-        function updateForm() {
-            const footer = document.getElementById('form-container-footer');
-            let formHtml = forms[activeTab] || '';
-            
-            // Adiciona botões comuns para as abas 1-5
-            if (activeTab >= 1 && activeTab <= 5) {
-                 formHtml += `
-                    <div class="d-flex justify-content-end gap-2">
-                        <button class="btn btn-danger btn-sm" onclick="deletarSelecionados()">🗑️Del</button>
-                        <button class="btn btn-success btn-sm" onclick="salvar()">💾Salve</button>
-                        <button class="btn btn-secondary btn-sm" onclick="exportTxt()">⬇️ TXT</button>
-                        <button class="btn btn-primary btn-sm" onclick="exportExcel()">⬇️ Exc</button>
-                    </div>`;
-            }
-            
-            footer.innerHTML = formHtml;
+            verificarDisponibilidade();
+            render('coleta-e-entrega');
+            render('entre-locais');
+            render('adm-293');
+            render('manutencao-294');
+            render('clientes-visitantes');
+            renderDashboard(today);
+            agendarTarefasDiarias();
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
 
-            // Lógica específica pós-renderização do formulário
-            if (activeTab === 1) {
-                const origem = document.getElementById('origem1');
-                const destino = document.getElementById('destino1');
-                opcoes.forEach(op => {
-                    origem.innerHTML += `<option value="${op}">${op}</option>`;
-                    destino.innerHTML += `<option value="${op}">${op}</option>`;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('shown.bs.tab', (e) => {
+                    const abaId = e.target.getAttribute('href').substring(1);
+                    if (abaId === 'coleta-e-entrega') {
+                         verificarDisponibilidade();
+                    } else if (abaId === 'clientes-visitantes') {
+                        renderDropdown('clientes-visitantes-setor', setoresOutros);
+                    } else if (abaId === 'dashboard') {
+                        renderDashboard(today);
+                    }
+                    reiniciarBotoes(abaId);
+                    limparCampos(abaId);
                 });
-            } else if (activeTab === 5) {
-                document.getElementById('placa5').addEventListener('input', autocompletarPlaca);
-            }
-        }
-        
-        document.querySelectorAll('.nav-link').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', event => {
-                const targetId = event.target.getAttribute('data-bs-target');
-                activeTab = parseInt(targetId.replace('#tab', ''));
-                updateForm();
-                atualizarOutput();
             });
+            document.getElementById('coleta-e-entrega-search').addEventListener('input', (e) => render('coleta-e-entrega', e.target.value));
+            document.getElementById('entre-locais-search').addEventListener('input', (e) => render('entre-locais', e.target.value));
+            document.getElementById('adm-293-search').addEventListener('input', (e) => render('adm-293', e.target.value));
+            document.getElementById('manutencao-294-search').addEventListener('input', (e) => render('manutencao-294', e.target.value));
+            document.getElementById('clientes-visitantes-search').addEventListener('input', (e) => render('clientes-visitantes', e.target.value));
         });
 
-        function getLocalStorageKey() {
-            switch (activeTab) {
-                case 1: return `registros-aba1`;
-                case 2: return `registros-coleta`;
-                case 3: return `registros-293`;
-                case 4: return `registros-294`;
-                case 5: return `registros-retira`;
-                case 6: return `registros-ocorrencia`;
-                case 7: return `registros-agenda`; // Chave para a agenda
-                default: return `registros-aba${activeTab}`;
-            }
-        }
-        
-        function getOutputId() {
-            return `output${activeTab}`;
-        }
-        
-        function getFiltroId() {
-            return `filtro${activeTab}`;
-        }
-        
-        function getOrdenarPorId() {
-            return `ordenarPor${activeTab}`;
-        }
-
-        function salvar() {
-            let registro = {};
-            let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-            const tabNumber = activeTab;
-
-            if (tabNumber >= 1 && tabNumber <= 5) {
-                // Lógica de salvar original para as abas 1 a 5
-                // (O código original foi omitido para brevidade, mas deve ser mantido aqui)
-                 if (tabNumber === 1) {
-                    registro = { data: document.getElementById(`data1`).value, cavalo: document.getElementById(`cavalo1`).value, carreta1: document.getElementById(`carreta11`).value, carreta2: document.getElementById(`carreta21`).value, hChegada: document.getElementById(`hChegada1`).value, hSaida: document.getElementById(`hSaida1`).value, motChegada: document.getElementById(`motChegada1`).value, motSaida: document.getElementById(`motSaida1`).value, origem: document.getElementById(`origem1`).value, destino: document.getElementById(`destino1`).value };
-                } else if (tabNumber >= 2 && tabNumber <= 4) {
-                    registro = { data: document.getElementById(`data${tabNumber}`).value, motorista: document.getElementById(`motorista${tabNumber}`).value, frota: document.getElementById(`frota${tabNumber}`).value, hSaida: document.getElementById(`hSaida${tabNumber}`).value, hEntrada: document.getElementById(`hEntrada${tabNumber}`).value, kmSaida: document.getElementById(`kmSaida${tabNumber}`).value, kmEntrada: document.getElementById(`kmEntrada${tabNumber}`).value, obs: document.getElementById(`obs${tabNumber}`).value };
-                } else if (tabNumber === 5) {
-                    registro = { data: document.getElementById(`data5`).value, nome: document.getElementById(`nome5`).value, placa: document.getElementById(`placa5`).value.toUpperCase(), modelo: document.getElementById(`modelo5`).value, horario: document.getElementById(`horario5`).value, setor: document.getElementById(`setor5`).value, obs: document.getElementById(`obs5`).value };
-                }
-            } else if (tabNumber === 6) {
-                const ocorrencia = document.getElementById('ocorrencia6').value;
-                if (!ocorrencia) {
-                    alert("Por favor, digite uma ocorrência.");
-                    return;
-                }
-                registro = {
-                    texto: ocorrencia,
-                    data: new Date().toISOString()
-                };
-            }
-
-            if (editIndex >= 0) {
-                registros[editIndex] = registro;
-                editIndex = -1;
-            } else {
-                registros.push(registro);
-            }
-
-            localStorage.setItem(getLocalStorageKey(), JSON.stringify(registros));
-            limparCampos();
-            atualizarOutput();
-        }
-
-        function limparCampos() {
-            // Código original de limpar campos para abas 1-5 omitido para brevidade
-            const tabNumber = activeTab;
-            if (tabNumber === 1) { document.getElementById('data1').value = ""; document.getElementById('cavalo1').value = ""; document.getElementById('carreta11').value = ""; document.getElementById('carreta21').value = ""; document.getElementById('hChegada1').value = ""; document.getElementById('hSaida1').value = ""; document.getElementById('motChegada1').value = ""; document.getElementById('motSaida1').value = ""; document.getElementById('origem1').value = ""; document.getElementById('destino1').value = ""; }
-            else if (tabNumber >= 2 && tabNumber <= 4) { document.getElementById(`data${tabNumber}`).value = ""; document.getElementById(`motorista${tabNumber}`).value = ""; document.getElementById(`frota${tabNumber}`).value = ""; document.getElementById(`hSaida${tabNumber}`).value = ""; document.getElementById(`hEntrada${tabNumber}`).value = ""; document.getElementById(`kmSaida${tabNumber}`).value = ""; document.getElementById(`kmEntrada${tabNumber}`).value = ""; document.getElementById(`obs${tabNumber}`).value = ""; }
-            else if (tabNumber === 5) { document.getElementById('data5').value = ""; document.getElementById('nome5').value = ""; document.getElementById('placa5').value = ""; document.getElementById('modelo5').value = ""; document.getElementById('horario5').value = ""; document.getElementById('setor5').value = ""; document.getElementById('obs5').value = ""; }
-            else if (tabNumber === 6) {
-                document.getElementById('ocorrencia6').value = "";
-            }
-        }
-        
-        function autocompletarPlaca() { /* Código original inalterado */
-             if (activeTab !== 5) return;
-            const placaInput = document.getElementById('placa5');
-            const placa = placaInput.value.toUpperCase().trim();
-            const registros = JSON.parse(localStorage.getItem('registros-retira') || "[]");
-            const registroEncontrado = registros.find(r => r.placa === placa);
-            if (registroEncontrado) {
-                document.getElementById('nome5').value = registroEncontrado.nome;
-                document.getElementById('modelo5').value = registroEncontrado.modelo;
-                document.getElementById('setor5').value = registroEncontrado.setor;
-            } else {
-                if (editIndex === -1) {
-                    document.getElementById('nome5').value = '';
-                    document.getElementById('modelo5').value = '';
-                    document.getElementById('setor5').value = '';
-                }
-            }
-        }
-
-        function atualizarOutput() {
-            if (activeTab === 7) { // Se for a aba da Agenda, usa a função específica
-                displayCalendar();
-                displayAppointments();
-                return;
-            }
-
-            const output = document.getElementById(getOutputId());
-            if (!output) return;
-            output.innerHTML = "";
-            selectedIndices = [];
-            let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-
-            // Filtragem e Ordenação para abas 1-5 (código original)
-            if (activeTab >= 1 && activeTab <= 5) {
-                const filtroInput = document.getElementById(getFiltroId());
-                const filtro = filtroInput ? filtroInput.value.toLowerCase() : "";
-                const ordenar = document.getElementById(getOrdenarPorId()).value;
-
-                registros = registros.filter(r => {
-                     if (activeTab === 1) { return r.cavalo?.toLowerCase().includes(filtro) || r.motChegada?.toLowerCase().includes(filtro) || r.motSaida?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
-                     else if (activeTab >= 2 && activeTab <= 4) { return r.motorista?.toLowerCase().includes(filtro) || r.frota?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
-                     else if (activeTab === 5) { return r.nome?.toLowerCase().includes(filtro) || r.placa?.toLowerCase().includes(filtro) || r.data?.includes(filtro); }
-                     return true;
-                });
-                registros.sort((a, b) => {
-                    if (ordenar === 'data') { return (a.data + (a.horario || a.hChegada || '') + (a.hSaida || '')).localeCompare(b.data + (b.horario || b.hChegada || '') + (b.hSaida || '')); }
-                    return (a[ordenar] || "").localeCompare(b[ordenar] || "");
-                });
-            }
-
-            registros.forEach((r, i) => {
-                const linha = document.createElement("div");
-                let textContent = "";
-                if (activeTab === 6) { // Output para a aba de ocorrências
-                    textContent = `[${new Date(r.data).toLocaleString('pt-BR')}] - ${r.texto}`;
-                } else {
-                     // Código original de exibição para abas 1-5
-                    if (activeTab === 1) { textContent = `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} H. Chegada: ${r.hChegada} H. Saída: ${r.hSaida} Mot. Chegada: ${r.motChegada} Mot. Saída: ${r.motSaida} Origem: ${r.origem} Destino: ${r.destino}`; }
-                    else if (activeTab >= 2 && activeTab <= 4) { textContent = `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`; }
-                    else if (activeTab === 5) { textContent = `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`; }
-                }
-
-                if (activeTab >= 1 && activeTab <= 5) {
-                    linha.innerHTML = `<input type="checkbox" data-index="${i}"> ${textContent}`;
-                    linha.querySelector('input').addEventListener('change', (e) => {
-                        const index = parseInt(e.target.dataset.index);
-                        if (e.target.checked) selectedIndices.push(index);
-                        else selectedIndices = selectedIndices.filter(item => item !== index);
-                    });
-                } else {
-                    linha.textContent = textContent;
-                }
-                
-                linha.ondblclick = () => editar(i);
-                output.appendChild(linha);
+        function renderDropdown(elementId, options) {
+            const select = document.getElementById(elementId);
+            if (!select) return;
+            select.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Selecione';
+            select.appendChild(defaultOption);
+            options.forEach(optionText => {
+                const option = document.createElement('option');
+                option.textContent = optionText;
+                option.value = optionText;
+                select.appendChild(option);
             });
         }
         
-        function deletarSelecionados() { /* Código original inalterado */
-            if (selectedIndices.length === 0) { alert("Nenhum item selecionado para deletar."); return; }
-            if (confirm(`Tem certeza que deseja deletar os ${selectedIndices.length} registro(s) selecionado(s)?`)) {
-                let registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-                selectedIndices.sort((a, b) => b - a);
-                selectedIndices.forEach(index => { if (registros[index]) registros.splice(index, 1); });
-                localStorage.setItem(getLocalStorageKey(), JSON.stringify(registros));
-                atualizarOutput();
+        function showToast(message) {
+            document.getElementById('toast-message').textContent = message;
+            myToast.show();
+        }
+
+        function getDadosAba(aba) {
+            try {
+                return JSON.parse(localStorage.getItem(localStorageKeys[aba]) || '[]');
+            } catch (e) {
+                console.error(`Erro ao carregar dados da aba '${aba}':`, e);
+                return [];
             }
         }
 
-        function editar(i) { /* Código original modificado para incluir aba 6 */
-            const r = JSON.parse(localStorage.getItem(getLocalStorageKey()))[i];
-            const tabNumber = activeTab;
-            if (tabNumber >=1 && tabNumber <= 5) {
-                 if (tabNumber === 1) { document.getElementById(`data1`).value = r.data; document.getElementById(`cavalo1`).value = r.cavalo; document.getElementById(`carreta11`).value = r.carreta1; document.getElementById(`carreta21`).value = r.carreta2; document.getElementById(`hChegada1`).value = r.hChegada; document.getElementById(`hSaida1`).value = r.hSaida; document.getElementById(`motChegada1`).value = r.motChegada; document.getElementById(`motSaida1`).value = r.motSaida; document.getElementById(`origem1`).value = r.origem; document.getElementById(`destino1`).value = r.destino; }
-                 else if (tabNumber >= 2 && tabNumber <= 4) { document.getElementById(`data${tabNumber}`).value = r.data; document.getElementById(`motorista${tabNumber}`).value = r.motorista; document.getElementById(`frota${tabNumber}`).value = r.frota; document.getElementById(`hSaida${tabNumber}`).value = r.hSaida; document.getElementById(`hEntrada${tabNumber}`).value = r.hEntrada; document.getElementById(`kmSaida${tabNumber}`).value = r.kmSaida; document.getElementById(`kmEntrada${tabNumber}`).value = r.kmEntrada; document.getElementById(`obs${tabNumber}`).value = r.obs; }
-                 else if (tabNumber === 5) { document.getElementById(`data5`).value = r.data; document.getElementById(`nome5`).value = r.nome; document.getElementById(`placa5`).value = r.placa; document.getElementById(`modelo5`).value = r.modelo; document.getElementById(`horario5`).value = r.horario; document.getElementById(`setor5`).value = r.setor; document.getElementById(`obs5`).value = r.obs; }
-            } else if (tabNumber === 6) {
-                document.getElementById('ocorrencia6').value = r.texto;
-            }
-            editIndex = i;
-        }
-
-        function exportTxt() { /* Código original inalterado */
-            const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-            const linhas = registros.map(r => {
-                 if (activeTab === 1) { return `Data: ${r.data} Cavalo: ${r.cavalo} Carreta1: ${r.carreta1} Carreta2: ${r.carreta2} H.Chegada: ${r.hChegada} H.Saída: ${r.hSaida} Mot.Chegada: ${r.motChegada} Mot.Saída: ${r.motSaida} Origem: ${r.origem} Destino: ${r.destino}`; }
-                 else if (activeTab >= 2 && activeTab <= 4) { return `Data: ${r.data} Motorista: ${r.motorista} Frota: ${r.frota} H. saída: ${r.hSaida} H. entrada: ${r.hEntrada} Km. saída: ${r.kmSaida} Km. entrada: ${r.kmEntrada} Obs: ${r.obs}`; }
-                 else if (activeTab === 5) { return `Data: ${r.data} Nome: ${r.nome} Placa: ${r.placa} Modelo: ${r.modelo} Horário: ${r.horario} Setor: ${r.setor} Obs: ${r.obs}`; }
-                 return "";
-            });
-            const blob = new Blob([linhas.join("\n")], { type: "text/plain" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `${getLocalStorageKey()}.txt`;
-            a.click();
-        }
-
-        function exportExcel() { /* Código original inalterado */
-            const registros = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-            const ws = XLSX.utils.json_to_sheet(registros);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Registros");
-            XLSX.writeFile(wb, `${getLocalStorageKey()}.xlsx`);
-        }
-        
-        document.querySelectorAll("[id^=filtro]").forEach(el => el.addEventListener("input", atualizarOutput));
-        document.querySelectorAll("[id^=ordenarPor]").forEach(el => el.addEventListener("change", atualizarOutput));
-
-        // --- LÓGICA DA ABA AGENDA (NOVO) ---
-        
-        let currentDisplayDate = new Date();
-
-        function displayCalendar() {
-            const calendarGrid = document.getElementById('calendar-grid');
-            const monthYearEl = document.getElementById('month-year');
-            calendarGrid.innerHTML = '';
-            
-            const year = currentDisplayDate.getFullYear();
-            const month = currentDisplayDate.getMonth();
-            
-            monthYearEl.textContent = `${currentDisplayDate.toLocaleString('pt-BR', { month: 'long' })} ${year}`;
-            
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
-
-            // Nomes dos dias da semana
-            ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(dayName => {
-                calendarGrid.innerHTML += `<div class="calendar-day-name">${dayName}</div>`;
-            });
-            
-            // Espaços em branco para o início do mês
-            for (let i = 0; i < firstDay; i++) {
-                calendarGrid.innerHTML += `<div></div>`;
-            }
-
-            // Dias do mês
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayEl = document.createElement('div');
-                dayEl.textContent = day;
-                dayEl.classList.add('calendar-day');
-                
-                const today = new Date();
-                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                    dayEl.classList.add('today');
-                }
-
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (appointments.some(app => app.date === dateStr)) {
-                    dayEl.classList.add('has-event');
-                }
-
-                dayEl.addEventListener('click', () => {
-                    document.getElementById('eventDate').value = dateStr;
-                    document.getElementById('eventDescription').value = '';
-                    document.getElementById('eventTime').value = '';
-                    eventModal.show();
-                });
-                calendarGrid.appendChild(dayEl);
+        function getLogs() {
+            try {
+                return JSON.parse(localStorage.getItem('logs') || '[]');
+            } catch (e) {
+                console.error('Erro ao carregar logs:', e);
+                return [];
             }
         }
 
-        function displayAppointments() {
-            const contentEl = document.getElementById('appointments-content');
-            contentEl.innerHTML = '';
-            const appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]').sort((a,b) => a.datetime.localeCompare(b.datetime));
-            
-            if (appointments.length === 0) {
-                contentEl.innerHTML = '<p class="text-muted">Nenhum compromisso agendado.</p>';
-                return;
-            }
-
-            appointments.forEach((app, index) => {
-                const appDate = new Date(app.datetime);
-                const item = document.createElement('div');
-                item.className = 'd-flex justify-content-between align-items-center appointment-item';
-                item.innerHTML = `
-                    <span>
-                        <strong>${appDate.toLocaleDateString('pt-BR')}, ${appDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</strong>: 
-                        ${app.description}
-                    </span>
-                    <button class="btn btn-outline-danger btn-sm py-0 px-1" onclick="deleteAppointment(${index})">X</button>
-                `;
-                contentEl.appendChild(item);
-            });
-        }
-        
-        function deleteAppointment(index) {
-            if (!confirm("Tem certeza que deseja apagar este compromisso?")) return;
-            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
-            appointments.splice(index, 1);
-            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
-            atualizarOutput();
-        }
-
-        function saveAppointment() {
-            const date = document.getElementById('eventDate').value;
-            const time = document.getElementById('eventTime').value;
-            const description = document.getElementById('eventDescription').value;
-
-            if (!time || !description) {
-                alert("Por favor, preencha a descrição e o horário.");
-                return;
-            }
-
-            const appointment = {
-                id: Date.now(), // ID único para o alerta
-                date: date,
-                time: time,
-                datetime: `${date}T${time}`,
-                description: description,
-                triggered: false
+        function addLog(action, details) {
+            const logs = getLogs();
+            const now = new Date();
+            const logEntry = {
+                timestamp: now.toISOString(),
+                user: 'Acesso Direto',
+                action,
+                details
             };
-
-            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
-            appointments.push(appointment);
-            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
-            
-            eventModal.hide();
-            atualizarOutput();
+            logs.push(logEntry);
+            localStorage.setItem('logs', JSON.stringify(logs));
         }
-
-        // --- LÓGICA DO RELÓGIO E ALARMES (NOVO) ---
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('live-clock').textContent = now.toLocaleTimeString('pt-BR');
-        }
-
-        function checkAlarms() {
-            const now = new Date();
-            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
-            
-            appointments.forEach(app => {
-                const appTime = new Date(app.datetime);
-                if (!app.triggered && now >= appTime) {
-                    showAlert(app);
-                    app.triggered = true;
-                }
+        
+        function salvar(aba) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            const dados = {};
+            dados.data = new Date().toISOString().split('T')[0];
+            inputs.forEach(inp => {
+                const key = inp.id.substring(inp.id.indexOf(aba) + aba.length + 1);
+                dados[key] = inp.value;
             });
-            localStorage.setItem('registros-agenda', JSON.stringify(appointments));
-        }
-
-        function showAlert(appointment) {
-            currentAlert = appointment;
-            document.getElementById('custom-alert-message').textContent = appointment.description;
-            document.getElementById('custom-alert').style.display = 'block';
-        }
-
-        function closeAlert() {
-            document.getElementById('custom-alert').style.display = 'none';
-            currentAlert = null;
-        }
-
-        function snoozeAlert() {
-            if (!currentAlert) return;
             
-            let appointments = JSON.parse(localStorage.getItem('registros-agenda') || '[]');
-            const alertIndex = appointments.findIndex(a => a.id === currentAlert.id);
-
-            if (alertIndex > -1) {
-                const newTime = new Date(new Date(appointments[alertIndex].datetime).getTime() + 5 * 60000); // Adia 5 minutos
-                appointments[alertIndex].datetime = newTime.toISOString().slice(0, 16);
-                appointments[alertIndex].triggered = false; // Permite que o alarme toque de novo
-                localStorage.setItem('registros-agenda', JSON.stringify(appointments));
+            let lista = getDadosAba(aba);
+            
+            if (itemSelecionado && itemSelecionado.aba === aba && itemSelecionado.index !== null) {
+                const oldData = lista[itemSelecionado.index];
+                lista[itemSelecionado.index] = { ...oldData, ...dados };
+                addLog('Edição', { aba, oldData, newData: dados });
+                showToast("Item editado com sucesso!");
+            } else {
+                lista.push(dados);
+                addLog('Inserção', { aba, newData: dados });
+                showToast("Item salvo com sucesso!");
             }
-            closeAlert();
-            displayAppointments();
+            localStorage.setItem(localStorageKeys[aba], JSON.stringify(lista));
+            render(aba);
+            limparCampos(aba);
+            const tableContainer = document.querySelector(`#${aba} .table-container`);
+            tableContainer.scrollTo({ top: tableContainer.scrollHeight, behavior: 'smooth' });
+            renderDashboard(today);
+            if (aba === 'coleta-e-entrega') {
+                verificarDisponibilidade();
+            }
+        }
+        
+        function render(aba, filtro = '') {
+            const listaOriginal = getDadosAba(aba);
+            const tbody = document.querySelector(`#lista-${aba} tbody`);
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            const listaFiltrada = listaOriginal.filter(item => {
+                if (!filtro) return true;
+                const filtroLowerCase = filtro.toLowerCase();
+                return Object.values(item).some(value => 
+                    value && value.toString().toLowerCase().includes(filtroLowerCase)
+                );
+            });
+            
+            listaFiltrada.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => selecionarItem(tr, aba, index);
+                
+                const tdData = document.createElement('td');
+                tdData.textContent = item.data ? new Date(item.data).toLocaleDateString('pt-BR') : '';
+                tr.appendChild(tdData);
+
+                const itemKeys = headersMap[aba];
+                itemKeys.forEach(key => {
+                    const td = document.createElement('td');
+                    td.textContent = item[key] || '';
+                    if (aba === 'clientes-visitantes' && key === 'setor') {
+                        if (item[key] === 'Posto') td.classList.add('highlight-post');
+                        if (item[key] === 'Retira') td.classList.add('highlight-retira');
+                        if (item[key] === 'RH') td.classList.add('highlight-rh');
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            atualizarContadores(aba, listaOriginal);
+            reiniciarBotoes(aba);
+        }
+        
+        function atualizarContadores(aba, lista) {
+            const registrosDoDia = lista.filter(item => item.data === today);
+
+            if (aba === 'entre-locais') {
+                const chegadas = registrosDoDia.filter(item => item.horachegada).length;
+                const saidas = registrosDoDia.filter(item => item.horasaida).length;
+                document.getElementById('entre-locais-patio').textContent = `Chegadas: ${chegadas}`;
+                document.getElementById('entre-locais-total').textContent = `Saídas: ${saidas}`;
+            }
+        }
+        
+        function selecionarItem(tr, aba, index) {
+            const tabela = document.querySelector(`#lista-${aba}`);
+            if (!tabela) return;
+            const todasTr = tabela.querySelectorAll('tr');
+            todasTr.forEach(row => row.classList.remove('selected'));
+            tr.classList.add('selected');
+            itemSelecionado = { aba, index };
+            const lista = getDadosAba(aba);
+            const item = lista[index];
+            preencherCampos(aba, item);
+            const editarBtn = document.getElementById(`editar-btn-${aba}`);
+            const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
+            editarBtn.disabled = false;
+            excluirBtn.disabled = false;
         }
 
-
-        // --- INICIALIZAÇÃO ---
-        window.onload = () => {
-            updateForm();
-            atualizarOutput();
-            
-            eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
-            document.getElementById('saveEvent').addEventListener('click', saveAppointment);
-
-            // Controles do calendário
-            document.getElementById('prev-month').addEventListener('click', () => {
-                currentDisplayDate.setMonth(currentDisplayDate.getMonth() - 1);
-                displayCalendar();
-            });
-            document.getElementById('next-month').addEventListener('click', () => {
-                currentDisplayDate.setMonth(currentDisplayDate.getMonth() + 1);
-                displayCalendar();
-            });
-
-            // Controles do alerta
-            document.getElementById('close-alert').addEventListener('click', closeAlert);
-            document.getElementById('snooze-alert').addEventListener('click', snoozeAlert);
-
-            // Loops
-            setInterval(updateClock, 1000); // Atualiza o relógio a cada segundo
-            setInterval(checkAlarms, 15000); // Verifica os alarmes a cada 15 segundos
-
-            // Atalhos de teclado
-            document.addEventListener("keydown", e => {
-                if (e.ctrlKey && e.key === "s") {
-                    e.preventDefault();
-                    if (activeTab <= 6) salvar();
-                } else if (e.ctrlKey && e.key === "f") {
-                    e.preventDefault();
-                    const filtroId = getFiltroId();
-                    if(document.getElementById(filtroId)) document.getElementById(filtroId).focus();
-                } else if (e.key === "Escape") {
-                    limparCampos();
-                    editIndex = -1;
-                    eventModal.hide();
-                    closeAlert();
+        function preencherCampos(aba, item) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            inputs.forEach(inp => {
+                const key = inp.id.substring(inp.id.indexOf(aba) + aba.length + 1);
+                if (item[key] !== undefined) {
+                    if (inp.tagName === 'SELECT') {
+                        const options = Array.from(inp.options);
+                        const valorEncontrado = options.find(option => option.value === item[key]);
+                        if (valorEncontrado) {
+                            inp.value = item[key];
+                        } else {
+                            const novaOpcao = document.createElement('option');
+                            novaOpcao.value = item[key];
+                            novaOpcao.textContent = item[key];
+                            inp.appendChild(novaOpcao);
+                            inp.value = item[key];
+                        }
+                    } else {
+                        inp.value = item[key];
+                    }
+                } else {
+                    inp.value = '';
                 }
             });
-        };
+        }
+
+        function confirmarEdicao(aba) {
+            if (itemSelecionado) {
+                document.getElementById('confirmModalBody').textContent = "Deseja editar este item?";
+                document.getElementById('confirmAction').className = 'btn btn-info';
+                document.getElementById('confirmAction').textContent = 'Editar';
+                document.getElementById('confirmAction').onclick = () => {
+                    salvar(aba);
+                    confirmModal.hide();
+                };
+                confirmModal.show();
+            }
+        }
+
+        function confirmarExclusao(aba) {
+            if (itemSelecionado) {
+                document.getElementById('confirmModalBody').textContent = "Deseja excluir este item?";
+                document.getElementById('confirmAction').className = 'btn btn-danger';
+                document.getElementById('confirmAction').textContent = 'Excluir';
+                document.getElementById('confirmAction').onclick = () => {
+                    excluirItem(aba, itemSelecionado.index);
+                    confirmModal.hide();
+                };
+                confirmModal.show();
+            }
+        }
+
+        function excluirItem(aba, index) {
+            const lista = getDadosAba(aba);
+            const deletedItem = lista.splice(index, 1);
+            localStorage.setItem(localStorageKeys[aba], JSON.stringify(lista));
+            addLog('Exclusão', { aba, deletedData: deletedItem[0] });
+            render(aba);
+            limparCampos(aba);
+            renderDashboard(today);
+            showToast("Item excluído com sucesso!");
+            if (aba === 'coleta-e-entrega') {
+                verificarDisponibilidade();
+            }
+        }
+
+        function reiniciarBotoes(aba) {
+            const editarBtn = document.getElementById(`editar-btn-${aba}`);
+            const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
+            if (editarBtn) editarBtn.disabled = true;
+            if (excluirBtn) excluirBtn.disabled = true;
+            itemSelecionado = null;
+        }
+
+        function limparCampos(aba) {
+            const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
+            inputs.forEach(inp => {
+                if (inp.type === 'date' || inp.type === 'time' || inp.type === 'text' || inp.type === 'number' || inp.type === 'email') {
+                    inp.value = '';
+                } else if (inp.tagName === 'SELECT') {
+                    inp.selectedIndex = 0;
+                }
+            });
+        }
+
+        function verificarDisponibilidade() {
+            const coletaData = getDadosAba('coleta-e-entrega');
+            const motoristasEmUso = new Set();
+            const frotasEmUso = new Set();
+
+            coletaData.forEach(item => {
+                if (item.horasaida && !item.horachegada) {
+                    if (item.motorista) motoristasEmUso.add(item.motorista);
+                    if (item.frota && item.frota.toLowerCase() !== 'agregado') frotasEmUso.add(item.frota);
+                }
+            });
+            motoristasDisponiveis = motoristasColeta.filter(m => !motoristasEmUso.has(m));
+            frotasDisponiveis = frotasColeta.filter(f => !frotasEmUso.has(f) || f.toLowerCase() === 'agregado');
+            renderDropdown('coleta-e-entrega-motorista', motoristasDisponiveis);
+            renderDropdown('coleta-e-entrega-frota', frotasDisponiveis);
+        }
+        
+        function ordenarDadosPorDataEHora(lista, aba) {
+            const campoHora = {
+                'coleta-e-entrega': 'horasaida',
+                'entre-locais': 'horachegada', 
+                'adm-293': 'horasaida', 
+                'manutencao-294': 'horasaida', 
+                'clientes-visitantes': 'hora'
+            };
+            const campoDeHora = campoHora[aba] || 'data';
+            lista.sort((a, b) => {
+                const dataA = a.data;
+                const horaA = a[campoDeHora] || '00:00';
+                const dataB = b.data;
+                const horaB = b[campoDeHora] || '00:00';
+                const dateTimeA = new Date(`${dataA}T${horaA}`);
+                const dateTimeB = new Date(`${dataB}T${horaB}`);
+                return dateTimeA - dateTimeB;
+            });
+            return lista;
+        }
+
+        function exportarRelatorioCompleto() {
+            const wb = XLSX.utils.book_new();
+            const abas = ['coleta-e-entrega', 'entre-locais', 'adm-293', 'manutencao-294', 'clientes-visitantes'];
+            abas.forEach(aba => {
+                const data = getDadosAba(aba);
+                const headers = ['data', ...headersMap[aba]];
+                const dataWithHeaders = data.map(item => {
+                    const newObject = {};
+                    for (const key of headers) {
+                        newObject[key] = item[key];
+                    }
+                    return newObject;
+                });
+                if (dataWithHeaders.length > 0) {
+                    const ws = XLSX.utils.json_to_sheet(dataWithHeaders);
+                    const sheetName = document.querySelector(`a[href="#${aba}"]`).textContent;
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                }
+            });
+            if (wb.SheetNames.length === 0) {
+                showToast("Não há dados em nenhuma seção para exportar.");
+                return;
+            }
+            const dataHora = new Date();
+            const dataFormatada = `${dataHora.getFullYear()}-${(dataHora.getMonth() + 1).toString().padStart(2, '0')}-${dataHora.getDate().toString().padStart(2, '0')}_${dataHora.getHours().toString().padStart(2, '0')}-${dataHora.getMinutes().toString().padStart(2, '0')}`;
+            const filename = `biz_movimentacao_${dataFormatada}.xlsx`;
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            saveAs(new Blob([wbout], { type: 'application/octet-stream' }), filename);
+        }
+
+        function agendarTarefasDiarias() {
+            const agora = new Date();
+            const meiaNoite = new Date(agora);
+            meiaNoite.setDate(agora.getDate() + 1);
+            meiaNoite.setHours(0, 0, 0, 0);
+            const tempoParaMeiaNoite = meiaNoite.getTime() - agora.getTime();
+            setTimeout(() => {
+                executarTarefasDiarias();
+                agendarTarefasDiarias();
+            }, tempoParaMeiaNoite);
+        }
+
+        function executarTarefasDiarias() {
+            const hoje = new Date();
+            const ultimoDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+            const isUltimoDia = hoje.getDate() === ultimoDiaDoMes;
+            showToast("Iniciando a emissão automática de relatórios...");
+            exportarRelatorioCompleto();
+            gerarRelatorioPDFDiario();
+            if (isUltimoDia) {
+                showToast("Fim de mês: Limpando os dados do Local Storage...");
+                limparDadosLocalStorage();
+            }
+        }
+        
+        function limparDadosLocalStorage() {
+            for (const key in localStorageKeys) {
+                localStorage.removeItem(localStorageKeys[key]);
+            }
+            showToast("Todos os dados do mês anterior foram apagados.");
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('darkModeToggle').querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+            renderDashboard(today);
+        }
+
+        function updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataHoje) {
+            // Coleta e Entrega
+            const saidasCE = dataColeta.filter(item => item.data === dataHoje && item.horasaida).length;
+            const retornadosCE = dataColeta.filter(item => item.data === dataHoje && item.horasaida && item.horachegada).length;
+            const faltaRetornarCE = saidasCE - retornadosCE;
+            document.getElementById('dashboard-ce-saidas').textContent = saidasCE;
+            document.getElementById('dashboard-ce-retornar').textContent = faltaRetornarCE > 0 ? faltaRetornarCE : 0;
+            
+            // Entre Locais
+            const chegadasEL = dataEntreLocais.filter(item => item.data === dataHoje && item.horachegada).length;
+            const saidasEL = dataEntreLocais.filter(item => item.data === dataHoje && item.horasaida).length;
+            document.getElementById('dashboard-el-chegadas').textContent = chegadasEL;
+            document.getElementById('dashboard-el-saidas').textContent = saidasEL;
+
+            // Motoristas Específicos
+            const saidaGilberto = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Gilberto').length;
+            const saidaWender = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Wender').length;
+            const saidaMoises = dataColeta.filter(item => item.data === dataHoje && item.motorista === 'Moisés').length;
+            document.getElementById('motorista-gilberto').textContent = saidaGilberto;
+            document.getElementById('motorista-wender').textContent = saidaWender;
+            document.getElementById('motorista-moises').textContent = saidaMoises;
+
+            // 293 ADM
+            const admDiario = dataADM.filter(item => item.data === dataHoje).length;
+            const admMensal = dataADM.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const totalKMMensalADM = admMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
+            const mediaKMMensalADM = admMensal.length > 0 ? (totalKMMensalADM / admMensal.length) : 0;
+            document.getElementById('dashboard-293adm-diario').textContent = admDiario;
+            document.getElementById('dashboard-293adm-km-mensal').textContent = `${mediaKMMensalADM.toFixed(0)}km`;
+
+            // 294 Manutenção
+            const manutDiario = dataManutencao.filter(item => item.data === dataHoje).length;
+            const manutMensal = dataManutencao.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const totalKMMensalManut = manutMensal.reduce((sum, item) => sum + (item.kmchegada - item.kmsaida), 0);
+            const mediaKMMensalManut = manutMensal.length > 0 ? (totalKMMensalManut / manutMensal.length) : 0;
+            document.getElementById('dashboard-294manutencao-diario').textContent = manutDiario;
+            document.getElementById('dashboard-294manutencao-km-mensal').textContent = `${mediaKMMensalManut.toFixed(0)}km`;
+
+            // Clientes e Visitantes
+            const cvDiario = dataClientes.filter(item => item.data === dataHoje).length;
+            const cvMensal = dataClientes.filter(item => item.data.substring(0, 7) === dataHoje.substring(0, 7));
+            const mediaCVMensal = cvMensal.length > 0 ? (cvMensal.length / new Date().getDate()) : 0;
+            document.getElementById('dashboard-cv-diario').textContent = cvDiario;
+            document.getElementById('dashboard-cv-mensal').textContent = mediaCVMensal.toFixed(0);
+
+            const postoCount = dataClientes.filter(item => item.setor === 'Posto' && item.data === dataHoje).length;
+            const retiraCount = dataClientes.filter(item => item.setor === 'Retira' && item.data === dataHoje).length;
+            const rhCount = dataClientes.filter(item => item.setor === 'RH' && item.data === dataHoje).length;
+            document.getElementById('badge-posto').textContent = `Posto: ${postoCount}`;
+            document.getElementById('badge-retira').textContent = `Retira: ${retiraCount}`;
+            document.getElementById('badge-rh').textContent = `RH: ${rhCount}`;
+        }
+
+        function renderRecentActivity() {
+            const allLogs = getLogs();
+            allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const recentLogs = allLogs.slice(0, 5);
+            const listElement = document.getElementById('recent-logs-list');
+            listElement.innerHTML = '';
+            if (recentLogs.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'Nenhum registro recente.';
+                listElement.appendChild(li);
+                return;
+            }
+            recentLogs.forEach(log => {
+                const li = document.createElement('li');
+                const logDate = new Date(log.timestamp);
+                const logTime = `${logDate.toLocaleDateString('pt-BR')} ${logDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                let details = log.details.aba ? `Aba: ${log.details.aba}` : 'N/A';
+                if (log.details.aba) {
+                    const navLink = document.querySelector(`a[href="#${log.details.aba}"]`);
+                    details = navLink ? `Aba: ${navLink.textContent}` : `Aba: ${log.details.aba}`;
+                }
+                li.textContent = `${logTime} - Ação: ${log.action} - ${details}`;
+                listElement.appendChild(li);
+            });
+        }
+
+        function renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataHoje, container) {
+            destroyChart('dailyMovementChart');
+            const coletaDiario = dataColeta.filter(item => item.data === dataHoje).length;
+            const admDiario = dataADM.filter(item => item.data === dataHoje).length;
+            const manutDiario = dataManutencao.filter(item => item.data === dataHoje).length;
+            
+            const ctx = container.querySelector('#dailyMovementChart').getContext('2d');
+            chartInstances.dailyMovementChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Coleta e Entrega', '293 ADM', '294 Manutenção'],
+                    datasets: [
+                        { label: 'Movimentações', data: [coletaDiario, admDiario, manutDiario], backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(255, 159, 64, 0.8)', 'rgba(153, 102, 255, 0.8)'] }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+        
+        function renderDashboard(dataTarget) {
+            const dataColeta = getDadosAba('coleta-e-entrega');
+            const dataADM = getDadosAba('adm-293');
+            const dataManutencao = getDadosAba('manutencao-294');
+            const dataEntreLocais = getDadosAba('entre-locais');
+            const dataClientes = getDadosAba('clientes-visitantes');
+            updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataTarget);
+            renderRecentActivity();
+            const mainDashboard = document.getElementById('dashboard');
+            renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataTarget, mainDashboard);
+        }
+
+        function destroyChart(chartId) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
+                delete chartInstances[chartId];
+            }
+        }
+
+        async function gerarPDFDoContainer(container, filename) {
+            const nav = document.querySelector('.navbar');
+            const navDisplay = nav.style.display;
+            nav.style.display = 'none';
+            const canvas = await html2canvas(container, { scale: 2, logging: false, useCORS: true });
+            nav.style.display = navDisplay;
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            pdf.save(filename);
+        }
+
+        function exportarDashboardPDF() {
+            const dashboardElement = document.getElementById('dashboard');
+            const today = new Date();
+            const filename = `bizdiario_${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}_${today.getHours().toString().padStart(2, '0')}-${today.getMinutes().toString().padStart(2, '0')}.pdf`;
+            gerarPDFDoContainer(dashboardElement, filename).then(() => {
+                showToast("Relatório PDF exportado com sucesso!");
+            });
+        }
+
+        async function gerarRelatorioPDFDiario() {
+            const dataParaRelatorio = new Date();
+            dataParaRelatorio.setDate(dataParaRelatorio.getDate());
+            const dataFormatada = dataParaRelatorio.toISOString().split('T')[0];
+            const hiddenContainer = document.getElementById('hidden-pdf-container');
+            hiddenContainer.innerHTML = document.getElementById('dashboard').innerHTML;
+            const tituloRelatorio = hiddenContainer.querySelector('h3');
+            tituloRelatorio.textContent = `Painel de Monitoramento - Relatório Diário (${dataFormatada.split('-').reverse().join('/')})`;
+            const dataColeta = getDadosAba('coleta-e-entrega');
+            const dataADM = getDadosAba('adm-293');
+            const dataManutencao = getDadosAba('manutencao-294');
+            const dataEntreLocais = getDadosAba('entre-locais');
+            const dataClientes = getDadosAba('clientes-visitantes');
+            updateDashboardCards(dataColeta, dataADM, dataManutencao, dataEntreLocais, dataClientes, dataFormatada);
+            renderRecentActivity(); 
+            renderDailyMovementChart(dataColeta, dataADM, dataManutencao, dataFormatada, hiddenContainer);
+            const filename = `bizdiario_${dataFormatada.replace(/-/g, '')}_0000.pdf`;
+            await gerarPDFDoContainer(hiddenContainer, filename);
+            hiddenContainer.innerHTML = '';
+            showToast("Relatório diário em PDF emitido automaticamente!");
+            renderDashboard(today);
+        }
+        
+        function editUser(index) {
+            showToast("Esta funcionalidade requer um back-end.");
+        }
+        function deleteUser(index) {
+            showToast("Esta funcionalidade requer um back-end.");
+        }
+
+        function exportarLogs() {
+            document.getElementById('masterPasswordInput').value = '';
+            document.getElementById('masterPasswordFeedback').textContent = '';
+            masterPasswordModal.show();
+        }
+
+        function confirmExportLogs() {
+            const password = document.getElementById('masterPasswordInput').value;
+            const feedbackElement = document.getElementById('masterPasswordFeedback');
+
+            if (password !== MASTER_PASSWORD) {
+                feedbackElement.textContent = 'Senha incorreta.';
+                return;
+            }
+
+            const logs = getLogs();
+            if (logs.length === 0) {
+                showToast("Nenhum log para exportar.");
+                masterPasswordModal.hide();
+                return;
+            }
+
+            let logText = "Log de Atividades do Sistema\n\n";
+            logs.forEach(log => {
+                const logDate = new Date(log.timestamp);
+                const timestampStr = `${logDate.toLocaleDateString('pt-BR')} ${logDate.toLocaleTimeString('pt-BR', { hour12: false })}`;
+                logText += `Data/Hora: ${timestampStr}\n`;
+                logText += `Usuário: ${log.user}\n`;
+                logText += `Ação: ${log.action}\n`;
+                logText += `Detalhes: ${JSON.stringify(log.details, null, 2)}\n\n`;
+            });
+
+            const blob = new Blob([logText], { type: "text/plain;charset=utf-8" });
+            const dataHora = new Date();
+            const filename = `biz_logs_${dataHora.getFullYear()}-${(dataHora.getMonth() + 1).toString().padStart(2, '0')}-${dataHora.getDate().toString().padStart(2, '0')}.txt`;
+            saveAs(blob, filename);
+            showToast("Logs exportados com sucesso!");
+            masterPasswordModal.hide();
+        }
     </script>
 </body>
 </html>
