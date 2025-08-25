@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentry RTE-700</title>
+    <title>Zentry - RTE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -318,8 +318,8 @@
         <nav class="navbar navbar-expand-lg navbar-light glassmorphism">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="https://zentry.kr/assets/common/zentry-logo.png" style="width: 80px; height: 40px; margin-right: 10px;">
-                    RTE - 700
+                    <img src="https://i.imgur.com/k9mD4vO.png" alt="Logo" style="width: 40px; height: 40px; margin-right: 10px;">
+                    Zentry RTE 700
                 </a>
                 <ul class="nav nav-tabs mx-auto" id="myTab" role="tablist">
                     <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dashboard">Dashboard</a></li>
@@ -332,7 +332,7 @@
                     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sobre">Sobre</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <span class="me-2 text-truncate" style="max-width: 120px;">User_test</span>
+                    <span class="me-2 text-truncate" style="max-width: 120px;">Bem-vindo!</span>
                     <button class="btn btn-icon" id="darkModeToggle"><i class="fa-solid fa-moon"></i></button>
                     <button class="btn btn-icon" onclick="showToast('O botão de logout foi desativado nesta versão do código.')"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
@@ -434,24 +434,6 @@
                                 <span class="badge rounded-pill bg-success mx-1" id="badge-rh">RH: 0</span>
                             </div>
                         </div>
-                        <div class="dashboard-card">
-                            <i class="fa-solid fa-user-gear icon"></i>
-                            <div class="title">Motoristas em Saída</div>
-                            <div class="sub-values">
-                                <div class="sub-value">
-                                    <span class="value info-text" id="motorista-gilberto">---</span>
-                                    <span class="label">Gilberto</span>
-                                </div>
-                                <div class="sub-value">
-                                    <span class="value info-text" id="motorista-wender">---</span>
-                                    <span class="label">Wender</span>
-                                </div>
-                                <div class="sub-value">
-                                    <span class="value info-text" id="motorista-moises">---</span>
-                                    <span class="label">Moisés</span>
-                                </div>
-                            </div>
-                        </div>
                         <div class="dashboard-terminal-card">
                             <div class="title"><i class="fa-solid fa-terminal me-2"></i>Logs do Sistema</div>
                             <ul id="recent-logs-list" class="terminal-log-list"></ul>
@@ -499,7 +481,8 @@
                             <select id="coleta-e-entrega-motorista" class="form-select"></select>
                         </div>
                         <div class="col-md-auto">
-                            <select id="coleta-e-entrega-frota" class="form-select"></select>
+                            <select id="coleta-e-entrega-frota" class="form-select" onchange="toggleManualInput('coleta-e-entrega')"></select>
+                            <input type="text" id="coleta-e-entrega-frota-manual" class="form-control mt-2" placeholder="Frota Manual" style="display:none;">
                         </div>
                         <div class="col-md-auto">
                             <input type="time" id="coleta-e-entrega-horasaida" class="form-control" placeholder="Hora de Saída">
@@ -962,8 +945,7 @@
             'clientes-visitantes': 'clientes-visitantes-data',
             'logs': 'logs'
         };
-        const motoristasColeta = ["Gilberto", "Wender", "Moisés", "Agregado",
-"Edberto",
+        const motoristasColeta = ["Edberto",
 "Luiz Carlos",
 "Edmar",
 "Renato",
@@ -994,8 +976,7 @@
 "Antônio Carlos",
 "Sandra",
 "André"];
-        const frotasColeta = ["10414",
-"10415",
+        const frotasColeta = ["10415",
 "10421",
 "10427",
 "10431",
@@ -1052,6 +1033,20 @@
             document.getElementById('clientes-visitantes-search').addEventListener('input', (e) => render('clientes-visitantes', e.target.value));
         });
 
+        function toggleManualInput(aba) {
+            const selectFrota = document.getElementById(`${aba}-frota`);
+            const manualInput = document.getElementById(`${aba}-frota-manual`);
+            if (selectFrota && manualInput) {
+                if (selectFrota.value === 'manual') {
+                    manualInput.style.display = 'block';
+                    manualInput.focus();
+                } else {
+                    manualInput.style.display = 'none';
+                    manualInput.value = '';
+                }
+            }
+        }
+
         function renderDropdown(elementId, options) {
             const select = document.getElementById(elementId);
             if (!select) return;
@@ -1066,6 +1061,13 @@
                 option.value = optionText;
                 select.appendChild(option);
             });
+
+            if (elementId === 'coleta-e-entrega-frota') {
+                const manualOption = document.createElement('option');
+                manualOption.value = 'manual';
+                manualOption.textContent = 'Entrada Manual';
+                select.appendChild(manualOption);
+            }
         }
         
         function showToast(message) {
@@ -1108,11 +1110,27 @@
             const inputs = document.querySelectorAll(`#form-${aba} input, #form-${aba} select`);
             const dados = {};
             dados.data = new Date().toISOString().split('T')[0];
+            
             inputs.forEach(inp => {
                 const key = inp.id.substring(inp.id.indexOf(aba) + aba.length + 1);
-                dados[key] = inp.value;
+                if (key === 'frota' && inp.value === 'manual') {
+                    const manualFrota = document.getElementById(`${aba}-frota-manual`);
+                    dados[key] = manualFrota.value.trim();
+                } else {
+                    dados[key] = inp.value;
+                }
             });
-            
+
+            if (aba === 'coleta-e-entrega') {
+                const frotaManualInput = document.getElementById('coleta-e-entrega-frota-manual');
+                const frotaSelect = document.getElementById('coleta-e-entrega-frota');
+                if (frotaSelect.value === 'manual') {
+                    dados.frota = frotaManualInput.value.trim();
+                } else {
+                    dados.frota = frotaSelect.value;
+                }
+            }
+
             let lista = getDadosAba(aba);
             
             if (itemSelecionado && itemSelecionado.aba === aba && itemSelecionado.index !== null) {
@@ -1141,8 +1159,10 @@
             const tbody = document.querySelector(`#lista-${aba} tbody`);
             if (!tbody) return;
             tbody.innerHTML = '';
-            
-            const listaFiltrada = listaOriginal.filter(item => {
+
+            const listaOrdenada = ordenarDadosPorDataEHora(listaOriginal, aba);
+
+            const listaFiltrada = listaOrdenada.filter(item => {
                 if (!filtro) return true;
                 const filtroLowerCase = filtro.toLowerCase();
                 return Object.values(item).some(value => 
@@ -1192,14 +1212,43 @@
             const todasTr = tabela.querySelectorAll('tr');
             todasTr.forEach(row => row.classList.remove('selected'));
             tr.classList.add('selected');
-            itemSelecionado = { aba, index };
-            const lista = getDadosAba(aba);
-            const item = lista[index];
-            preencherCampos(aba, item);
-            const editarBtn = document.getElementById(`editar-btn-${aba}`);
-            const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
-            editarBtn.disabled = false;
-            excluirBtn.disabled = false;
+
+            const listaOriginal = getDadosAba(aba);
+            const listaExibida = ordenarDadosPorDataEHora(listaOriginal, aba).filter(item => {
+                const filtro = document.getElementById(`${aba}-search`).value.toLowerCase();
+                if (!filtro) return true;
+                return Object.values(item).some(value => 
+                    value && value.toString().toLowerCase().includes(filtro)
+                );
+            });
+
+            const itemExibido = listaExibida[index];
+            if (!itemExibido) {
+                console.error("Não foi possível identificar o item selecionado.");
+                return;
+            }
+
+            const itemIndex = listaOriginal.findIndex(originalItem => {
+                if (aba === 'coleta-e-entrega') {
+                    return originalItem.data === itemExibido.data && originalItem.horasaida === itemExibido.horasaida;
+                } else if (aba === 'entre-locais') {
+                    return originalItem.data === itemExibido.data && originalItem.horachegada === itemExibido.horachegada;
+                } else {
+                    return originalItem.data === itemExibido.data && originalItem.horasaida === itemExibido.horasaida;
+                }
+            });
+
+            if (itemIndex !== -1) {
+                itemSelecionado = { aba, index: itemIndex };
+                preencherCampos(aba, listaOriginal[itemIndex]);
+                const editarBtn = document.getElementById(`editar-btn-${aba}`);
+                const excluirBtn = document.getElementById(`excluir-btn-${aba}`);
+                if (editarBtn) editarBtn.disabled = false;
+                if (excluirBtn) excluirBtn.disabled = false;
+            } else {
+                console.error("Item original não encontrado na lista.");
+                reiniciarBotoes(aba);
+            }
         }
 
         function preencherCampos(aba, item) {
@@ -1226,6 +1275,21 @@
                     inp.value = '';
                 }
             });
+
+            if (aba === 'coleta-e-entrega') {
+                const frotaSelect = document.getElementById('coleta-e-entrega-frota');
+                const frotaManualInput = document.getElementById('coleta-e-entrega-frota-manual');
+                const frotaValue = item.frota || '';
+                if (frotaSelect.querySelector(`option[value="${frotaValue}"]`)) {
+                    frotaSelect.value = frotaValue;
+                    frotaManualInput.style.display = 'none';
+                    frotaManualInput.value = '';
+                } else {
+                    frotaSelect.value = 'manual';
+                    frotaManualInput.style.display = 'block';
+                    frotaManualInput.value = frotaValue;
+                }
+            }
         }
 
         function confirmarEdicao(aba) {
@@ -1285,6 +1349,10 @@
                     inp.selectedIndex = 0;
                 }
             });
+
+            if (aba === 'coleta-e-entrega') {
+                document.getElementById('coleta-e-entrega-frota-manual').style.display = 'none';
+            }
         }
 
         function verificarDisponibilidade() {
@@ -1330,16 +1398,20 @@
             const abas = ['coleta-e-entrega', 'entre-locais', 'adm-293', 'manutencao-294', 'clientes-visitantes'];
             abas.forEach(aba => {
                 const data = getDadosAba(aba);
-                const headers = ['data', ...headersMap[aba]];
-                const dataWithHeaders = data.map(item => {
-                    const newObject = {};
-                    for (const key of headers) {
-                        newObject[key] = item[key];
-                    }
-                    return newObject;
-                });
-                if (dataWithHeaders.length > 0) {
-                    const ws = XLSX.utils.json_to_sheet(dataWithHeaders);
+                if (data.length > 0) {
+                    // Mapeia os dados para incluir apenas as chaves desejadas
+                    const dataFiltered = data.map(item => {
+                        const filteredItem = {};
+                        filteredItem['Data'] = item.data ? new Date(item.data).toLocaleDateString('pt-BR') : '';
+                        headersMap[aba].forEach(key => {
+                            let headerText = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                            headerText = headerText.replace('Placacpf', 'Placa/CPF').replace('Marcamodelo', 'Marca/Modelo').replace('Kmsaida', 'KM Saída').replace('Kmchegada', 'KM Chegada').replace('Horasaida', 'Hora Saída').replace('Horachegada', 'Hora Chegada').replace('Motchegada', 'Mot. Chegada').replace('Motsaida', 'Mot. Saída');
+                            filteredItem[headerText] = item[key];
+                        });
+                        return filteredItem;
+                    });
+                    
+                    const ws = XLSX.utils.json_to_sheet(dataFiltered, { header: Object.keys(dataFiltered[0]) });
                     const sheetName = document.querySelector(`a[href="#${aba}"]`).textContent;
                     XLSX.utils.book_append_sheet(wb, ws, sheetName);
                 }
@@ -1423,18 +1495,6 @@
             const saidasEL = dataEntreLocais.filter(item => item.data === dataHoje && item.horasaida).length;
             document.getElementById('dashboard-el-chegadas').textContent = chegadasEL;
             document.getElementById('dashboard-el-saidas').textContent = saidasEL;
-
-            // Motoristas Específicos
-            const saidasMotoristas = { "Gilberto": "---", "Wender": "---", "Moisés": "---" };
-            const saidasHoje = dataColeta.filter(item => item.data === dataHoje && item.horasaida && !item.horachegada);
-            saidasHoje.forEach(item => {
-                if (saidasMotoristas.hasOwnProperty(item.motorista)) {
-                    saidasMotoristas[item.motorista] = item.horasaida;
-                }
-            });
-            document.getElementById('motorista-gilberto').textContent = saidasMotoristas.Gilberto;
-            document.getElementById('motorista-wender').textContent = saidasMotoristas.Wender;
-            document.getElementById('motorista-moises').textContent = saidasMotoristas.Moisés;
             
             // Funções de cálculo para médias
             function calcularMediaKm(data) {
