@@ -1,3 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PRISM-Style Console</title>
+<style>
+  /* Fonte e cores estilo Win95 */
+  body {
+    margin:0;
+    font-family:"MS Sans Serif", Geneva, sans-serif;
+    background: #008080;
+    color: #000;
+  }
+  header, footer {
+    background: #c0c0c0;
+    border-bottom: 2px solid #fff;
+    border-top: 2px solid #808080;
+    padding: 4px 8px;
+  }
+  header h1 {
+    margin:0;
+    font-size:14px;
+  }
+  main {
+    display:flex;
+    padding:8px;
+    gap:8px;
+  }
+  .panel {
+    background:#c0c0c0;
+    border:2px solid #fff;
+    border-bottom-color:#808080;
+    border-right-color:#808080;
+    padding:6px;
+  }
+  .panel h2 {
+    margin:0 0 4px 0;
+    font-size:12px;
+  }
+  .btn {
+    font-family:"MS Sans Serif";
+    font-size:12px;
+    padding:2px 6px;
+    border:2px solid #fff;
+    border-bottom-color:#808080;
+    border-right-color:#808080;
+    background:#c0c0c0;
+    cursor:pointer;
+    margin:2px 0;
+  }
+  .btn:active {
+    border-top-color:#808080;
+    border-left-color:#808080;
+    border-bottom-color:#fff;
+    border-right-color:#fff;
+  }
+  input[type="text"], input[type="number"], select {
+    font-family:"MS Sans Serif";
+    font-size:12px;
+    border:2px solid #fff;
+    border-bottom-color:#808080;
+    border-right-color:#808080;
+    background:#c0c0c0;
+    padding:2px 4px;
+    width:100%;
+  }
+  .logs {
+    height:300px;
+    overflow:auto;
+    background:#fff;
+    border:2px solid #fff;
+    border-bottom-color:#808080;
+    border-right-color:#808080;
+    font-family:"MS Sans Serif";
+    font-size:12px;
+    padding:4px;
+  }
+  .log-row {
+    padding:2px 4px;
+    cursor:pointer;
+  }
+  .log-row:hover {
+    background:#000080;
+    color:#fff;
+  }
+  .detail-panel {
+    position:fixed;
+    top:50px;
+    right:10px;
+    width:260px;
+    background:#c0c0c0;
+    border:2px solid #fff;
+    border-bottom-color:#808080;
+    border-right-color:#808080;
+    padding:6px;
+    display:none;
+  }
+  footer {
+    text-align:center;
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>PRISM-Style Console</h1>
+</header>
+
+<main>
+  <div class="panel" style="width:200px;">
+    <h2>Controles</h2>
+    <label>Busca:
+      <input id="q" type="text" placeholder="ID ou Entidade">
+    </label><br>
+    <label>Desde (dias):
+      <input id="since" type="number" min="0" max="365" value="7">
+    </label><br>
+    <label>Score mínimo:
+      <input id="risk" type="number" min="0" max="100" value="10">
+    </label><br>
+    <button class="btn" id="btn_gen">Gerar Evento</button>
+    <button class="btn" id="btn_clear">Limpar Logs</button>
+  </div>
+
+  <div class="panel" style="flex:1; display:flex; flex-direction:column;">
+    <h2>Feed de eventos</h2>
+    <div class="logs" id="logs"></div>
+  </div>
+</main>
+
+<div class="detail-panel" id="detailPanel">
+  <h3 id="detailTitle"></h3>
+  <p><strong>ID:</strong> <span id="detailID"></span></p>
+  <p><strong>Entidade:</strong> <span id="detailEnt"></span></p>
+  <p><strong>Score:</strong> <span id="detailScore"></span></p>
+  <p><strong>Data:</strong> <span id="detailTime"></span></p>
+  <p><strong>Descrição:</strong> <span id="detailDesc"></span></p>
+</div>
+
+<footer>PRISM-Style Console • © 2025</footer>
+
+<script>
+const STATE={data:[]};
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1)+min);}
+function genID(){return 'r-'+Math.random().toString(36).substring(2,9);}
+function genEvent(){
+  const entities=['EntA','EntB','EntC','EntD','EntX'];
+  const risk=['low','med','high'];
+  const score=rnd(1,100);
+  const r={id:genID(), ent:entities[rnd(0,entities.length-1)], risk:risk[score<40?0:score<70?1:2], score:score, desc:'Atividade simulada', ts:new Date()};
+  STATE.data.unshift(r);
+  if(STATE.data.length>200) STATE.data.pop();
+  renderLogs();
+}
+const logsEl=document.getElementById('logs');
+const detailPanel=document.getElementById('detailPanel');
+function renderLogs(){
+  const q=document.getElementById('q').value.toLowerCase();
+  logsEl.innerHTML='';
+  STATE.data.forEach(ev=>{
+    if(q && !ev.ent.toLowerCase().includes(q) && !ev.id.toLowerCase().includes(q)) return;
+    const row=document.createElement('div');
+    row.className='log-row';
+    row.innerText=`[${ev.ts.toLocaleTimeString()}] ${ev.ent} | Score: ${ev.score} (${ev.risk})`;
+    row.addEventListener('click',()=>{
+      showDetail(ev);
+    });
+    logsEl.appendChild(row);
+  });
+}
+function showDetail(ev){
+  document.getElementById('detailTitle').innerText=`Evento: ${ev.ent}`;
+  document.getElementById('detailID').innerText=ev.id;
+  document.getElementById('detailEnt').innerText=ev.ent;
+  document.getElementById('detailScore').innerText=ev.score+' ('+ev.risk+')';
+  document.getElementById('detailTime').innerText=ev.ts.toLocaleString();
+  document.getElementById('detailDesc').innerText=ev.desc;
+  detailPanel.style.display='block';
+}
+document.getElementById('q').addEventListener('input', renderLogs);
+document.getElementById('btn_gen').addEventListener('click',genEvent);
+document.getElementById('btn_clear').addEventListener('click',()=>{
+  STATE.data=[];
+  renderLogs();
+  detailPanel.style.display='none';
+});
+</script>
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -986,9 +1176,11 @@
 "Jorge",
 "Wellington",
 "Luiz Renato",
+"Antônio Cândido",
 "Felipe",
-"Fernando",
-"Fernando",
+"Fernando - PX",
+"Júlio César",
+"Daniel - PX",
 "Antonio Candido",
 "Sandra",
 "André"];
