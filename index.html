@@ -1130,7 +1130,7 @@
             
             listaFiltrada.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                tr.onclick = () => selecionarItem(tr, aba, item);
+                tr.ondblclick = () => selecionarItem(tr, aba, item);
                 
                 const tdData = document.createElement('td');
                 tdData.textContent = item.data ? new Date(item.data).toLocaleDateString('pt-BR') : '';
@@ -1652,17 +1652,4 @@
                 const timestampStr = `${logDate.toLocaleDateString('pt-BR')} ${logDate.toLocaleTimeString('pt-BR', { hour12: false })}`;
                 logText += `Data/Hora: ${timestampStr}\n`;
                 logText += `Usuário: ${log.user}\n`;
-                logText += `Ação: ${log.action}\n`;
-                logText += `Detalhes: ${JSON.stringify(log.details, null, 2)}\n\n`;
-            });
-
-            const blob = new Blob([logText], { type: "text/plain;charset=utf-8" });
-            const dataHora = new Date();
-            const filename = `biz_logs_${dataHora.getFullYear()}-${(dataHora.getMonth() + 1).toString().padStart(2, '0')}-${dataHora.getDate().toString().padStart(2, '0')}.txt`;
-            saveAs(blob, filename);
-            showToast("Logs exportados com sucesso!");
-            masterPasswordModal.hide();
-        }
-    </script>
-</body>
-</html>
+    ```
